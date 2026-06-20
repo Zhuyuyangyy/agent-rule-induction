@@ -120,7 +120,7 @@ P1Score(T) =
 - An OpenAI-compatible Chat Completions endpoint (configured via environment variables)
 
 ```bash
-export OPENAI_API_KEY="sk-..."
+export OPENAI_API_KEY="your_key_here"
 export OPENAI_BASE_URL="https://api.deepseek.com/v1"   # or other compatible endpoint
 npm install
 ```
