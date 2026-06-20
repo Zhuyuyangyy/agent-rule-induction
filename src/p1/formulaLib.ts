@@ -1,3 +1,4 @@
+/** @deprecated Use p1Benchmark.ts instead. Kept temporarily for backward compatibility. */
 // P1 formula library.
 //
 // SYNTHETIC_FORMULAS: >= 50 randomly-generated expression trees (depth 2-4,

@@ -354,10 +354,54 @@ export function analyze(resultDir: string, tasksPath: string): AnalysisReport {
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
   console.log(`\nReport: ${reportPath}`);
 
-  // Write failure cases to separate file
-  const failurePath = path.join(resultDir, 'failure_cases.json');
-  fs.writeFileSync(failurePath, JSON.stringify(failureCases, null, 2));
-  console.log(`Failure cases: ${failurePath}`);
+  // Write failure cases as JSONL (P0 requirement)
+  const failureJsonlPath = path.join(resultDir, 'failure_cases.jsonl');
+  const failureLines = failureCases.map(fc => JSON.stringify(fc));
+  fs.writeFileSync(failureJsonlPath, failureLines.join('\n') + '\n');
+  console.log(`Failure cases: ${failureJsonlPath}`);
+
+  // Write summary.csv (P0 requirement)
+  const csvPath = path.join(resultDir, 'summary.csv');
+  const csvHeaders = 'condition,total_tasks,accuracy,avg_queries,avg_tokens,avg_latency_ms,avg_final_vs,invalid_output_rate,query_efficiency';
+  const csvRows = allMetrics.map(m =>
+    `${m.condition},${m.totalTasks},${m.accuracy.toFixed(4)},${m.avgQueries.toFixed(2)},${m.avgTokens.toFixed(0)},${m.avgLatencyMs.toFixed(0)},${m.avgFinalVS.toFixed(2)},${m.invalidOutputRate.toFixed(4)},${m.queryEfficiency.toFixed(4)}`
+  );
+  fs.writeFileSync(csvPath, csvHeaders + '\n' + csvRows.join('\n') + '\n');
+  console.log(`Summary CSV: ${csvPath}`);
+
+  // Write report.md (P0 requirement)
+  const reportMdPath = path.join(resultDir, 'report.md');
+  let md = '# P0 Rule Induction Benchmark Report\n\n';
+  md += `Generated: ${report.generatedAt}\n\n`;
+  md += '## Oracle Upper Bound\n\n';
+  md += `| Metric | Value |\n|--------|-------|\n`;
+  md += `| Accuracy (theoretical max) | ${oracleUpperBound.accuracy.toFixed(3)} |\n`;
+  md += `| Avg Queries (optimal) | ${oracleUpperBound.avgQueries.toFixed(2)} |\n`;
+  md += `| VS Size One Rate | ${oracleUpperBound.vsSizeOneRate.toFixed(3)} |\n`;
+  md += `| Avg Final VS | ${oracleUpperBound.avgFinalVS.toFixed(2)} |\n\n`;
+  md += `${oracleUpperBound.description}\n\n`;
+  md += '## Metrics by Condition\n\n';
+  md += '| Condition | Tasks | Accuracy | Avg Queries | Avg Tokens | Avg Final VS | Invalid Rate | Efficiency |\n';
+  md += '|-----------|-------|----------|-------------|------------|--------------|--------------|------------|\n';
+  for (const m of allMetrics) {
+    md += `| ${m.condition} | ${m.totalTasks} | ${(m.accuracy * 100).toFixed(1)}% | ${m.avgQueries.toFixed(2)} | ${m.avgTokens.toFixed(0)} | ${m.avgFinalVS.toFixed(2)} | ${(m.invalidOutputRate * 100).toFixed(1)}% | ${m.queryEfficiency.toFixed(3)} |\n`;
+  }
+  md += '\n## Failure Type Breakdown\n\n';
+  md += '| Condition | correct | wrong_rule | invalid_json | overconfident_guess | version_space_mismatch | api_error |\n';
+  md += '|-----------|---------|------------|--------------|---------------------|----------------------|----------|\n';
+  for (const m of allMetrics) {
+    const ft = m.failureTypeCounts;
+    md += `| ${m.condition} | ${ft.correct || 0} | ${ft.wrong_rule || 0} | ${ft.invalid_json || ft.no_answer || 0} | ${ft.overconfident_guess || 0} | ${ft.version_space_mismatch || ft.ambiguous_vs || 0} | ${ft.api_error || 0} |\n`;
+  }
+  md += '\n## Significance Tests\n\n';
+  md += "| Comparison | Metric | Mean A | Mean B | t-stat | p-value | Cohen's d | Significant |\n";
+  md += '|------------|--------|--------|--------|--------|---------|-----------|-------------|\n';
+  for (const s of significance) {
+    md += `| ${s.conditionA} vs ${s.conditionB} | ${s.metric} | ${s.meanA.toFixed(3)} | ${s.meanB.toFixed(3)} | ${s.tStatistic.toFixed(3)} | ${s.pValue.toFixed(4)} | ${s.cohensD.toFixed(3)} | ${s.significant ? 'Yes' : 'No'} |\n`;
+  }
+  md += `\n\nTotal failure cases: ${failureCases.length}\n`;
+  fs.writeFileSync(reportMdPath, md);
+  console.log(`Report MD: ${reportMdPath}`);
 
   return report;
 }

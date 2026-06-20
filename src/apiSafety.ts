@@ -4,6 +4,8 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { createRequire } from 'module';
+const _require = createRequire(import.meta.url);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -42,23 +44,39 @@ export interface RequestLedgerEntry {
 }
 
 export interface Manifest {
-  rule_space_version: string;
-  task_file_sha256: string;
+  experiment_id: string;
+  git_commit: string;
+  seed: number;
+  task_count: number;
+  conditions: string[];
   model: string;
-  condition: string;
-  prompt_version: string;
   temperature: number;
+  prompt_version: string;
+  task_file_sha256: string;
+  started_at: string;
+  finished_at: string;
+  // Legacy / additional fields kept for backward compat
+  rule_space_version: string;
+  condition: string;
   max_tokens: number;
   max_queries: number;
   min_queries: number;
   parser_mode: 'strict' | 'loose';
-  seed: number;
   code_commit_or_source_hash: string;
   created_at: string;
-  experiment_id: string;
 }
 
 export interface ResultRecord {
+  // P0-mandated fields (auto-filled by OutputManager.appendResult if not provided)
+  task_id?: string;
+  condition?: string;
+  hidden_rule?: string;
+  predicted_rule?: string | null;
+  query_count?: number;
+  token_usage?: number;
+  latency_ms?: number;
+  failure_type?: string;
+  // Core fields
   taskId: string;
   trueRuleId: string;
   predictedRuleId: string | null;
@@ -71,6 +89,59 @@ export interface ResultRecord {
   config: any;
   taskKey: string;
   responseSources?: ('api' | 'cache_replay')[];
+}
+
+// ---------------------------------------------------------------------------
+// Git commit helper
+// ---------------------------------------------------------------------------
+
+export function getGitCommit(): string {
+  try {
+    const { execSync } = _require('child_process') as typeof import('child_process');
+    return execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
+  } catch {
+    return 'unknown';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Token extraction helper
+// ---------------------------------------------------------------------------
+
+export function extractTokenUsage(conversation: ResultRecord['conversation']): number {
+  let total = 0;
+  for (const m of conversation) {
+    const u: any = (m as any).usage;
+    if (u) {
+      if (typeof u.total_tokens === 'number') total += u.total_tokens;
+      else if (typeof u.prompt_tokens === 'number' && typeof u.completion_tokens === 'number') total += u.prompt_tokens + u.completion_tokens;
+    }
+  }
+  return total;
+}
+
+// ---------------------------------------------------------------------------
+// Failure type computation (full P0 enum)
+// ---------------------------------------------------------------------------
+
+export type FailureType = 'correct'
+  | 'wrong_rule'
+  | 'insufficient_queries'
+  | 'invalid_json'
+  | 'timeout'
+  | 'api_error'
+  | 'version_space_mismatch'
+  | 'overconfident_guess';
+
+export function computeFailureType(r: { correct: boolean; predictedRuleId: string | null; queriesMade: number; finalVersionSpaceSize: number; initialVersionSpaceSize: number; maxQueries?: number }): FailureType {
+  if (r.finalVersionSpaceSize < 0) return 'api_error';
+  if (r.correct) return 'correct';
+  if (!r.predictedRuleId) return 'invalid_json';
+  const maxQ = r.maxQueries ?? 6;
+  if (r.queriesMade < maxQ && r.finalVersionSpaceSize > 1) return 'overconfident_guess';
+  if (r.finalVersionSpaceSize > 1 && r.queriesMade >= maxQ) return 'version_space_mismatch';
+  if (r.queriesMade < maxQ && r.finalVersionSpaceSize <= 1) return 'wrong_rule';
+  return 'wrong_rule';
 }
 
 // ---------------------------------------------------------------------------
@@ -139,6 +210,9 @@ export class OutputManager {
   public readonly cacheDir: string;
   private readonly context: ExperimentContext;
   private readonly sourceHash: string;
+  private readonly gitCommit: string;
+  private readonly startedAt: string;
+  private finishedAt: string;
   private readonly resume: boolean;
   private readonly overwrite: boolean;
   private completedKeys: Map<string, ResultRecord> = new Map();
@@ -152,6 +226,9 @@ export class OutputManager {
     this.resume = !!opts.resume;
     this.overwrite = !!opts.overwrite;
     this.sourceHash = computeSourceHash();
+    this.gitCommit = getGitCommit();
+    this.startedAt = new Date().toISOString();
+    this.finishedAt = '';
     this.baseDir = opts.baseDir ?? path.join('results', ctx.experimentId, ctx.condition);
     this.resultsPath = path.join(this.baseDir, 'results.jsonl');
     this.manifestPath = path.join(this.baseDir, 'manifest.json');
@@ -195,21 +272,33 @@ export class OutputManager {
 
   private _loadOrCreateManifest(): void {
     const taskHash = sha256File(this.context.taskFilePath);
+    // Count tasks from file for task_count
+    let taskCount = 0;
+    try {
+      const tasksData = JSON.parse(fs.readFileSync(this.context.taskFilePath, 'utf-8'));
+      taskCount = Array.isArray(tasksData) ? tasksData.length : 0;
+    } catch { taskCount = 0; }
     const desired: Manifest = {
-      rule_space_version: this.context.ruleSpaceVersion,
-      task_file_sha256: taskHash,
+      experiment_id: this.context.experimentId,
+      git_commit: this.gitCommit,
+      seed: this.context.seed,
+      task_count: taskCount,
+      conditions: [this.context.condition],
       model: this.context.model,
-      condition: this.context.condition,
-      prompt_version: this.context.promptVersion,
       temperature: this.context.temperature,
+      prompt_version: this.context.promptVersion,
+      task_file_sha256: taskHash,
+      started_at: this.startedAt,
+      finished_at: '',
+      // Legacy fields
+      rule_space_version: this.context.ruleSpaceVersion,
+      condition: this.context.condition,
       max_tokens: this.context.maxTokens,
       max_queries: this.context.maxQueries,
       min_queries: this.context.minQueries,
       parser_mode: this.context.parserMode,
-      seed: this.context.seed,
       code_commit_or_source_hash: this.sourceHash,
-      created_at: new Date().toISOString(),
-      experiment_id: this.context.experimentId,
+      created_at: this.startedAt,
     };
 
     if (fs.existsSync(this.manifestPath) && fs.statSync(this.manifestPath).size > 0) {
@@ -219,12 +308,19 @@ export class OutputManager {
         fs.writeFileSync(this.manifestPath, JSON.stringify(desired, null, 2));
         return;
       }
-      // Resume mode: validate manifest matches (skip created_at)
+      // Resume mode: validate manifest matches (skip timestamp fields)
       const mismatch: string[] = [];
       for (const key of Object.keys(existing) as (keyof Manifest)[]) {
-        if (key === 'created_at') continue;
-        if ((existing as any)[key] !== (desired as any)[key]) {
-          mismatch.push(`${key}: existing=${(existing as any)[key]} desired=${(desired as any)[key]}`);
+        if (key === 'created_at' || key === 'started_at' || key === 'finished_at') continue;
+        const existingVal = (existing as any)[key];
+        const desiredVal = (desired as any)[key];
+        // Compare arrays by value
+        if (Array.isArray(existingVal) && Array.isArray(desiredVal)) {
+          if (JSON.stringify(existingVal) !== JSON.stringify(desiredVal)) {
+            mismatch.push(`${key}: existing=${JSON.stringify(existingVal)} desired=${JSON.stringify(desiredVal)}`);
+          }
+        } else if (existingVal !== desiredVal) {
+          mismatch.push(`${key}: existing=${existingVal} desired=${desiredVal}`);
         }
       }
       if (mismatch.length > 0) {
@@ -279,6 +375,26 @@ export class OutputManager {
 
   appendResult(record: ResultRecord): void {
     record.taskKey = computeResultKey(this.context, record.taskId);
+    // Fill P0-mandated fields from legacy fields
+    if (!record.task_id) record.task_id = record.taskId;
+    if (!record.hidden_rule) record.hidden_rule = record.trueRuleId;
+    if (!record.predicted_rule) record.predicted_rule = record.predictedRuleId;
+    if (!record.query_count) record.query_count = record.queriesMade;
+    if (!record.token_usage) record.token_usage = extractTokenUsage(record.conversation);
+    if (!record.condition) record.condition = this.context.condition;
+    if (!record.failure_type) {
+      const ft = computeFailureType({
+        correct: record.correct,
+        predictedRuleId: record.predictedRuleId,
+        queriesMade: record.queriesMade,
+        finalVersionSpaceSize: record.finalVersionSpaceSize,
+        initialVersionSpaceSize: record.initialVersionSpaceSize,
+        maxQueries: this.context.maxQueries,
+      });
+      record.failure_type = ft;
+    }
+    // latency_ms: compute from conversation timestamps if available, else 0
+    if (!record.latency_ms) record.latency_ms = 0;
     const line = JSON.stringify(record) + '\n';
     const tmpPath = this.resultsPath + '.tmp';
     const existing = fs.existsSync(this.resultsPath) ? fs.readFileSync(this.resultsPath, 'utf-8') : '';
@@ -287,7 +403,17 @@ export class OutputManager {
   }
 
   close(): void {
+    if (this.closed) return;
     this.closed = true;
+    this.finishedAt = new Date().toISOString();
+    // Update manifest with finished_at
+    try {
+      if (fs.existsSync(this.manifestPath)) {
+        const manifest: Manifest = JSON.parse(fs.readFileSync(this.manifestPath, 'utf-8'));
+        manifest.finished_at = this.finishedAt;
+        fs.writeFileSync(this.manifestPath, JSON.stringify(manifest, null, 2));
+      }
+    } catch {}
   }
 }
 
@@ -453,20 +579,32 @@ export class ApiClientWrapper {
           content = res.content;
           usage = res.usage;
         } else {
-          // Dynamic import to allow injection of mock clients in tests
-          const { default: OpenAI } = await import('openai');
-          const client = new OpenAI({ apiKey: this.apiKey, baseURL: this.baseUrl });
-          const completion = await client.chat.completions.create({
-            model: opts.model,
-            messages: opts.messages as any,
-            temperature: opts.temperature,
-            max_tokens: opts.max_tokens,
+          // Use native fetch directly (OpenAI SDK has connection issues in some sandboxed environments)
+          const baseUrl = this.baseUrl || 'https://api.openai.com/v1';
+          const url = baseUrl.endsWith('/') ? baseUrl + 'chat/completions' : baseUrl + '/chat/completions';
+          const resp = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${this.apiKey}`,
+            },
+            body: JSON.stringify({
+              model: opts.model,
+              messages: opts.messages,
+              temperature: opts.temperature,
+              max_tokens: opts.max_tokens,
+            }),
           });
-          content = completion.choices[0]?.message?.content || '';
-          usage = completion.usage ? {
-            prompt_tokens: completion.usage.prompt_tokens ?? null,
-            completion_tokens: completion.usage.completion_tokens ?? null,
-            total_tokens: completion.usage.total_tokens ?? null,
+          if (!resp.ok) {
+            const errBody = await resp.text();
+            throw new Error(`API error ${resp.status}: ${errBody.substring(0, 500)}`);
+          }
+          const data = await resp.json() as any;
+          content = data.choices?.[0]?.message?.content || '';
+          usage = data.usage ? {
+            prompt_tokens: data.usage.prompt_tokens ?? null,
+            completion_tokens: data.usage.completion_tokens ?? null,
+            total_tokens: data.usage.total_tokens ?? null,
           } : { prompt_tokens: null, completion_tokens: null, total_tokens: null };
         }
         this.ledger.update({

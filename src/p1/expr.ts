@@ -1,3 +1,4 @@
+/** @deprecated Use symbolicExpr.ts instead. Kept temporarily for backward compatibility. */
 // P1 symbolic expression DSL: AST, evaluate, parse, serialize, complexity,
 // canonicalize, symbolicallyEqual.
 //

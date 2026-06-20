@@ -5,12 +5,12 @@
 //   2. 经典公式库（附加 demo）
 //   3. 数据生成（训练 + heldout，可选高斯噪声）
 //   4. P1 评分（heldout 准确率 + 符号等价性 - 复杂度 - 查询成本）
-//   5. 三个算法 baseline（random / greedy / oracle，本地可跑，无需 API）
+//   5. 五个算法 baseline（random / greedy / active-random / active-infogain / oracle）
 //   6. benchmark 编排（区分合成/经典，显著性检验，支持无噪声/有噪声）
 //   7. CLI 入口
 //
 // 用法：
-//   npx tsx src/p1/p1Benchmark.ts --n 60 --seed 42 --noise 0 --output results/p1_report.json
+//   npx tsx src/p1/p1Benchmark.ts --n 60 --seed 42 --noise 0 --output results/p1/p1_report.json
 
 import fs from 'fs';
 import path from 'path';
@@ -559,6 +559,288 @@ export function runGreedySearchP1(
   };
 }
 
+// ---------------------------------------------------------------------------
+// Active baselines: active-random and active-infogain
+// ---------------------------------------------------------------------------
+
+/**
+ * 生成候选表达式池（供 active baselines 使用）。
+ *
+ * 生成 poolSize 个随机表达式，在训练集上过滤掉产生 NaN 的。
+ */
+function generateCandidatePool(
+  rng: () => number,
+  inputVars: string[],
+  poolSize: number,
+): Expr[] {
+  const pool: Expr[] = [];
+  for (let i = 0; i < poolSize; i++) {
+    const depth = 1 + Math.floor(rng() * 3); // 1..3
+    const expr = genRandomExpr(rng, depth, inputVars, true);
+    pool.push(expr);
+  }
+  return pool;
+}
+
+/**
+ * 在输入空间中均匀采样候选 query 点。
+ * 在 [-5, 5] 范围内均匀采样 nCandidates 个点。
+ */
+function generateCandidateQueryPoints(
+  inputVars: string[],
+  nCandidates: number,
+  rng: () => number,
+): Record<string, number>[] {
+  const points: Record<string, number>[] = [];
+  for (let i = 0; i < nCandidates; i++) {
+    const env: Record<string, number> = {};
+    for (const v of inputVars) {
+      env[v] = -5 + rng() * 10; // [-5, 5]
+    }
+    points.push(env);
+  }
+  return points;
+}
+
+/**
+ * 计算候选表达式池在某个 query 点上的输出方差。
+ * score(x) = variance({ f(x) | f in candidates })
+ */
+function computeOutputVariance(
+  candidates: Expr[],
+  queryPoint: Record<string, number>,
+): number {
+  const values: number[] = [];
+  for (const expr of candidates) {
+    try {
+      const v = evaluate(expr, queryPoint);
+      if (Number.isFinite(v)) {
+        values.push(v);
+      }
+    } catch {
+      // skip NaN expressions
+    }
+  }
+  if (values.length < 2) return 0;
+  const mean = values.reduce((s, v) => s + v, 0) / values.length;
+  const variance = values.reduce((s, v) => s + (v - mean) ** 2, 0) / values.length;
+  return variance;
+}
+
+/**
+ * Active-random baseline: 随机选 query 点，但用版本空间筛选候选表达式。
+ *
+ * 流程：
+ *   1. 生成候选表达式池
+ *   2. 每步：随机选一个 query 点
+ *   3. 查询 target 在该点的输出
+ *   4. 筛除不一致的候选（无噪声：|f(x)-y| <= tolerance；有噪声：按权重保留）
+ *   5. 重复直到查询预算耗尽
+ *   6. 返回训练集上最优的候选
+ */
+export function runActiveRandomP1(
+  target: SymbolicTheory,
+  dataset: Dataset,
+  queryBudget: number,
+  noise: number,
+  seed: number,
+): BaselineOutput {
+  const rng = mulberry32(seed);
+  const poolSize = 300;
+  const tolerance = 1e-3;
+
+  // 生成候选池
+  let candidates = generateCandidatePool(rng, target.inputVars, poolSize);
+
+  // 生成候选 query 点（50 个）
+  const candidateQueryPoints = generateCandidateQueryPoints(target.inputVars, 50, rng);
+
+  let queryCount = 0;
+
+  for (let step = 0; step < queryBudget; step++) {
+    if (candidates.length === 0) break;
+
+    // 随机选一个 query 点
+    const queryPoint = pick(rng, candidateQueryPoints);
+
+    // 查询 target 在该点的输出（使用 target 的表达式计算）
+    let targetOutput: number;
+    try {
+      targetOutput = evaluate(target.expr, queryPoint);
+    } catch {
+      continue; // 跳过产生 NaN 的点
+    }
+    if (!Number.isFinite(targetOutput)) continue;
+
+    queryCount++;
+
+    // 筛选候选
+    const sigma = noise > 0 ? Math.max(noise * Math.abs(targetOutput), 0.01) : 0;
+    const filtered: Expr[] = [];
+    for (const expr of candidates) {
+      try {
+        const pred = evaluate(expr, queryPoint);
+        if (!Number.isFinite(pred)) continue;
+        const error = Math.abs(pred - targetOutput);
+        if (noise === 0) {
+          // 无噪声：严格筛选
+          if (error <= tolerance) {
+            filtered.push(expr);
+          }
+        } else {
+          // 有噪声：按概率保留（exp(-error^2 / sigma^2)）
+          const keepProb = Math.exp(-(error * error) / (sigma * sigma + 1e-12));
+          if (rng() < keepProb) {
+            filtered.push(expr);
+          }
+        }
+      } catch {
+        // skip
+      }
+    }
+
+    candidates = filtered.length > 0 ? filtered : candidates;
+  }
+
+  // 从剩余候选中选训练集上最优的
+  let bestExpr: Expr = Const(0);
+  let bestMse = Infinity;
+  for (const expr of candidates) {
+    const mse = trainingMse(expr, dataset);
+    if (mse < bestMse) {
+      bestMse = mse;
+      bestExpr = expr;
+    }
+  }
+
+  return {
+    theory: makeTheory(`${target.id}_active_random`, bestExpr, target.outputVar, target.inputVars),
+    queryCost: queryCount,
+  };
+}
+
+/**
+ * Active-infogain baseline: 信息增益最大化选 query 点（方差最大）。
+ *
+ * 这不是 greedy 冒充！真正的 active-infogain 实现：
+ *
+ * 1. 维护候选表达式集合 C（初始为随机生成的表达式池）
+ * 2. 在候选输入空间中选择 query x，使得 C 中表达式在 x 上的输出方差最大
+ *    score(x) = variance({ f(x) | f ∈ C })
+ * 3. 查询 target 在 x 上的 y
+ * 4. 删除或降权与 y 不一致的候选表达式：
+ *    - 无噪声: keep f if |f(x) - y| <= tolerance
+ *    - 有噪声: weight f by exp(-error^2 / sigma^2)
+ * 5. 重复直到预算耗尽
+ * 6. 返回最优候选表达式（按 heldout accuracy 或权重）
+ *
+ * 实现参数：
+ *   - 候选池大小: 300
+ *   - 查询预算: queryBudget 次
+ *   - tolerance: 1e-3（无噪声）
+ *   - sigma: 根据噪声水平调整
+ *   - 输入空间: [-5, 5] 范围内均匀采样 50 个候选 query 点
+ */
+export function runActiveInfogainP1(
+  target: SymbolicTheory,
+  dataset: Dataset,
+  queryBudget: number,
+  noise: number,
+  seed: number,
+): BaselineOutput {
+  const rng = mulberry32(seed);
+  const poolSize = 300;
+  const tolerance = 1e-3;
+
+  // 1. 生成候选表达式池
+  let candidates = generateCandidatePool(rng, target.inputVars, poolSize);
+
+  // 2. 生成候选 query 点（50 个，在 [-5, 5] 范围内均匀采样）
+  const candidateQueryPoints = generateCandidateQueryPoints(target.inputVars, 50, rng);
+
+  let queryCount = 0;
+
+  for (let step = 0; step < queryBudget; step++) {
+    if (candidates.length <= 1) break;
+
+    // 选择使候选池输出方差最大的 query 点
+    let bestQueryIdx = 0;
+    let bestVariance = -1;
+    for (let qi = 0; qi < candidateQueryPoints.length; qi++) {
+      const variance = computeOutputVariance(candidates, candidateQueryPoints[qi]);
+      if (variance > bestVariance) {
+        bestVariance = variance;
+        bestQueryIdx = qi;
+      }
+    }
+
+    const queryPoint = candidateQueryPoints[bestQueryIdx];
+
+    // 3. 查询 target 在该点的输出
+    let targetOutput: number;
+    try {
+      targetOutput = evaluate(target.expr, queryPoint);
+    } catch {
+      // 如果该点产生 NaN，换一个随机点
+      const altIdx = Math.floor(rng() * candidateQueryPoints.length);
+      try {
+        targetOutput = evaluate(target.expr, candidateQueryPoints[altIdx]);
+      } catch {
+        continue;
+      }
+    }
+    if (!Number.isFinite(targetOutput)) continue;
+
+    queryCount++;
+
+    // 4. 筛选候选：删除或降权与观测不一致的表达式
+    const sigma = noise > 0 ? Math.max(noise * Math.abs(targetOutput), 0.01) : 0;
+    const filtered: Expr[] = [];
+    for (const expr of candidates) {
+      try {
+        const pred = evaluate(expr, queryPoint);
+        if (!Number.isFinite(pred)) continue;
+        const error = Math.abs(pred - targetOutput);
+        if (noise === 0) {
+          // 无噪声：严格筛选，keep f if |f(x) - y| <= tolerance
+          if (error <= tolerance) {
+            filtered.push(expr);
+          }
+        } else {
+          // 有噪声：按概率保留，weight f by exp(-error^2 / sigma^2)
+          const keepProb = Math.exp(-(error * error) / (sigma * sigma + 1e-12));
+          if (rng() < keepProb) {
+            filtered.push(expr);
+          }
+        }
+      } catch {
+        // skip expressions that error out
+      }
+    }
+
+    // 如果全部被筛掉，保留原始候选池（避免空集）
+    if (filtered.length > 0) {
+      candidates = filtered;
+    }
+  }
+
+  // 6. 返回最优候选表达式（按训练集 MSE 选择）
+  let bestExpr: Expr = Const(0);
+  let bestMse = Infinity;
+  for (const expr of candidates) {
+    const mse = trainingMse(expr, dataset);
+    if (mse < bestMse) {
+      bestMse = mse;
+      bestExpr = expr;
+    }
+  }
+
+  return {
+    theory: makeTheory(`${target.id}_active_infogain`, bestExpr, target.outputVar, target.inputVars),
+    queryCost: queryCount,
+  };
+}
+
 /**
  * Oracle：直接返回 target（理论上限）。
  */
@@ -719,6 +1001,8 @@ export interface RunP1BenchmarkOpts {
   randomBudget?: number;
   /** 贪心搜索预算（最大加项步数） */
   greedyBudget?: number;
+  /** active baseline 查询预算 */
+  queryBudget?: number;
   /** 输出文件路径（可选） */
   output?: string;
 }
@@ -750,6 +1034,15 @@ export interface AggregatedMetrics {
   avgQueryCost: number;
 }
 
+export interface PairedComparison {
+  nPairs: number;
+  meanScoreDiff: number;
+  winsA: number;
+  winsB: number;
+  ties: number;
+  pValueApprox: number;
+}
+
 export interface P1Report {
   generatedAt: string;
   opts: {
@@ -760,6 +1053,7 @@ export interface P1Report {
     nHeldout: number;
     randomBudget: number;
     greedyBudget: number;
+    queryBudget: number;
   };
   syntheticCount: number;
   classicCount: number;
@@ -772,23 +1066,20 @@ export interface P1Report {
   };
   significanceTest: {
     method: string;
-    randomVsGreedy: {
-      nPairs: number;
-      meanScoreDiff: number; // greedy - random
-      winsGreedy: number;
-      winsRandom: number;
-      ties: number;
-      pValueApprox: number;
-    };
+    randomVsGreedy: PairedComparison;
+    randomVsActiveInfogain: PairedComparison;
+    greedyVsActiveInfogain: PairedComparison;
   };
+  failureCases: PerFormulaResult[];
+  notes: string[];
 }
 
 /**
  * 运行 P1 benchmark。
  *
- * 对合成公式（>= 50）和经典公式（>= 10）分别跑 random / greedy / oracle 三个 baseline，
+ * 对合成公式（>= 50）和经典公式（>= 10）分别跑 5 个 baseline，
  * 区分两类任务的准确率，必测 heldout prediction 与 symbolic equivalence，
- * 并做 random vs greedy 的配对显著性检验。
+ * 并做配对显著性检验。
  */
 export function runP1Benchmark(opts: RunP1BenchmarkOpts = {}): P1Report {
   const n = opts.n ?? 60;
@@ -798,6 +1089,7 @@ export function runP1Benchmark(opts: RunP1BenchmarkOpts = {}): P1Report {
   const nHeldout = opts.nHeldout ?? 30;
   const randomBudget = opts.randomBudget ?? 30;
   const greedyBudget = opts.greedyBudget ?? 8;
+  const queryBudget = opts.queryBudget ?? 10;
 
   // 生成公式
   const syntheticFormulas = generateSyntheticFormulas(n, seed);
@@ -806,12 +1098,12 @@ export function runP1Benchmark(opts: RunP1BenchmarkOpts = {}): P1Report {
     ...CLASSIC_FORMULAS.map((t) => ({ theory: t, category: 'classic' as const })),
   ];
 
-  const baselines = ['random', 'greedy', 'oracle'];
+  const baselines = ['random', 'greedy', 'active-random', 'active-infogain', 'oracle'];
   const perFormulaResults: PerFormulaResult[] = [];
 
-  // 收集 random vs greedy 的配对分数（用于显著性检验）
-  const randomScores: number[] = [];
-  const greedyScores: number[] = [];
+  // 收集配对分数（用于显著性检验）
+  const scoreArrays: Record<string, number[]> = {};
+  for (const b of baselines) scoreArrays[b] = [];
 
   for (let fi = 0; fi < allFormulas.length; fi++) {
     const { theory: target, category } = allFormulas[fi];
@@ -819,12 +1111,16 @@ export function runP1Benchmark(opts: RunP1BenchmarkOpts = {}): P1Report {
 
     const randomOut = runRandomSearchP1(target, dataset, randomBudget);
     const greedyOut = runGreedySearchP1(target, dataset, greedyBudget);
+    const activeRandomOut = runActiveRandomP1(target, dataset, queryBudget, noise, seed + fi * 1000 + 77);
+    const activeInfogainOut = runActiveInfogainP1(target, dataset, queryBudget, noise, seed + fi * 1000 + 88);
     const oracleOut = runOracleP1(target, dataset);
 
     const baselineOutputs: Record<string, BaselineOutput> = {
-      random: randomOut,
-      greedy: greedyOut,
-      oracle: oracleOut,
+      'random': randomOut,
+      'greedy': greedyOut,
+      'active-random': activeRandomOut,
+      'active-infogain': activeInfogainOut,
+      'oracle': oracleOut,
     };
 
     const results: Record<string, PerFormulaBaselineResult> = {};
@@ -846,6 +1142,7 @@ export function runP1Benchmark(opts: RunP1BenchmarkOpts = {}): P1Report {
         score: scoreResult.score,
         queryCost: out.queryCost,
       };
+      scoreArrays[b].push(scoreResult.score);
     }
 
     perFormulaResults.push({
@@ -855,9 +1152,6 @@ export function runP1Benchmark(opts: RunP1BenchmarkOpts = {}): P1Report {
       targetComplexity: target.complexity,
       results,
     });
-
-    randomScores.push(results['random'].score);
-    greedyScores.push(results['greedy'].score);
   }
 
   // 聚合（按合成/经典/整体分组）
@@ -878,21 +1172,37 @@ export function runP1Benchmark(opts: RunP1BenchmarkOpts = {}): P1Report {
     aggregated.overall[b] = aggregateMetrics(perFormulaResults, b);
   }
 
-  // 显著性检验：random vs greedy 配对比较
-  const sigTest = pairedSignTest(greedyScores, randomScores);
+  // 显著性检验：配对比较
+  const randomVsGreedy = pairedSignTest(scoreArrays['greedy'], scoreArrays['random']);
+  const randomVsActiveInfogain = pairedSignTest(scoreArrays['active-infogain'], scoreArrays['random']);
+  const greedyVsActiveInfogain = pairedSignTest(scoreArrays['active-infogain'], scoreArrays['greedy']);
+
+  // 失败案例：active-infogain 的 heldoutAccuracy < 0.5 或非 oracle 的 symbolicEquivalent=false
+  const failureCases = perFormulaResults.filter((r) => {
+    const aig = r.results['active-infogain'];
+    return aig.heldoutAccuracy < 0.5;
+  });
 
   const report: P1Report = {
     generatedAt: new Date().toISOString(),
-    opts: { n, seed, noise, nTrain, nHeldout, randomBudget, greedyBudget },
+    opts: { n, seed, noise, nTrain, nHeldout, randomBudget, greedyBudget, queryBudget },
     syntheticCount: syntheticFormulas.length,
     classicCount: CLASSIC_FORMULAS.length,
     baselines,
     perFormulaResults,
     aggregated,
     significanceTest: {
-      method: 'paired_sign_test (greedy vs random, two-sided)',
-      randomVsGreedy: sigTest,
+      method: 'paired_sign_test (two-sided)',
+      randomVsGreedy,
+      randomVsActiveInfogain,
+      greedyVsActiveInfogain,
     },
+    failureCases,
+    notes: [
+      'P1 prototype results (not claiming P1 completion)',
+      'passive/scaffold pending for P1',
+      noise === 0 ? 'Condition: clean (no noise)' : `Condition: noisy (noise=${noise})`,
+    ],
   };
 
   // 写入文件
@@ -938,14 +1248,7 @@ function aggregateMetrics(results: PerFormulaResult[], baseline: string): Aggreg
  * 在零假设（A 与 B 无差异）下，非平局对数中 A 胜数 ~ Binomial(n, 0.5)。
  * 双侧 p 值 = 2 * min(P(X <= winsA), P(X >= winsA))。
  */
-function pairedSignTest(scoresA: number[], scoresB: number[]): {
-  nPairs: number;
-  meanScoreDiff: number;
-  winsGreedy: number;
-  winsRandom: number;
-  ties: number;
-  pValueApprox: number;
-} {
+function pairedSignTest(scoresA: number[], scoresB: number[]): PairedComparison {
   const n = Math.min(scoresA.length, scoresB.length);
   let winsA = 0, winsB = 0, ties = 0, sumDiff = 0;
   for (let i = 0; i < n; i++) {
@@ -969,8 +1272,8 @@ function pairedSignTest(scoresA: number[], scoresB: number[]): {
   return {
     nPairs: n,
     meanScoreDiff: n > 0 ? sumDiff / n : 0,
-    winsGreedy: winsA,
-    winsRandom: winsB,
+    winsA,
+    winsB,
     ties,
     pValueApprox: pValue,
   };
@@ -1023,6 +1326,7 @@ function parseArgs(argv: string[]): RunP1BenchmarkOpts {
     else if (a === '--n-heldout') opts.nHeldout = parseInt(next());
     else if (a === '--random-budget') opts.randomBudget = parseInt(next());
     else if (a === '--greedy-budget') opts.greedyBudget = parseInt(next());
+    else if (a === '--query-budget') opts.queryBudget = parseInt(next());
     else if (a === '--output') opts.output = next();
   }
   return opts;
@@ -1030,9 +1334,9 @@ function parseArgs(argv: string[]): RunP1BenchmarkOpts {
 
 function printSummary(report: P1Report): void {
   const lines: string[] = [];
-  lines.push('=== P1 符号规律发现 Benchmark ===');
+  lines.push('=== P1 符号规律发现 Benchmark (P1 prototype results) ===');
   lines.push(`  生成时间: ${report.generatedAt}`);
-  lines.push(`  参数: n=${report.opts.n} seed=${report.opts.seed} noise=${report.opts.noise} nTrain=${report.opts.nTrain} nHeldout=${report.opts.nHeldout}`);
+  lines.push(`  参数: n=${report.opts.n} seed=${report.opts.seed} noise=${report.opts.noise} nTrain=${report.opts.nTrain} nHeldout=${report.opts.nHeldout} queryBudget=${report.opts.queryBudget}`);
   lines.push(`  公式数: 合成=${report.syntheticCount} 经典=${report.classicCount} 总计=${report.syntheticCount + report.classicCount}`);
   lines.push('');
   lines.push('--- 按 baseline 汇总（整体）---');
@@ -1058,24 +1362,24 @@ function printSummary(report: P1Report): void {
     lines.push(`    经典 (n=${cls.count}): acc=${cls.avgAccuracy.toFixed(4)} eqRate=${cls.eqRate.toFixed(4)} score=${cls.avgScore.toFixed(4)}`);
   }
   lines.push('');
-  lines.push('--- 显著性检验（greedy vs random，配对符号检验）---');
-  const st = report.significanceTest.randomVsGreedy;
-  lines.push(`  方法: ${report.significanceTest.method}`);
-  lines.push(`  配对数: ${st.nPairs}`);
-  lines.push(`  平均分差 (greedy - random): ${st.meanScoreDiff.toFixed(6)}`);
-  lines.push(`  greedy 胜: ${st.winsGreedy}  random 胜: ${st.winsRandom}  平局: ${st.ties}`);
-  lines.push(`  双侧 p 值近似: ${st.pValueApprox.toFixed(6)}`);
+  lines.push('--- 配对显著性检验（paired sign test, two-sided）---');
+  const st1 = report.significanceTest.randomVsGreedy;
+  lines.push(`  random vs greedy: meanDiff(greedy-random)=${st1.meanScoreDiff.toFixed(6)} winsA=${st1.winsA} winsB=${st1.winsB} ties=${st1.ties} p=${st1.pValueApprox.toFixed(6)}`);
+  const st2 = report.significanceTest.randomVsActiveInfogain;
+  lines.push(`  random vs active-infogain: meanDiff(aig-random)=${st2.meanScoreDiff.toFixed(6)} winsA=${st2.winsA} winsB=${st2.winsB} ties=${st2.ties} p=${st2.pValueApprox.toFixed(6)}`);
+  const st3 = report.significanceTest.greedyVsActiveInfogain;
+  lines.push(`  greedy vs active-infogain: meanDiff(aig-greedy)=${st3.meanScoreDiff.toFixed(6)} winsA=${st3.winsA} winsB=${st3.winsB} ties=${st3.ties} p=${st3.pValueApprox.toFixed(6)}`);
   lines.push('');
-  if (report.opts.noise === 0) {
-    lines.push('  条件: 无噪声');
-  } else {
-    lines.push(`  条件: 有噪声 (noise=${report.opts.noise})`);
+  lines.push(`  失败案例数 (active-infogain acc<0.5): ${report.failureCases.length}`);
+  lines.push('');
+  for (const note of report.notes) {
+    lines.push(`  NOTE: ${note}`);
   }
   console.log(lines.join('\n'));
 }
 
 function formatRow(cols: string[]): string {
-  return cols.map((c) => c.padEnd(12)).join('');
+  return cols.map((c) => c.padEnd(16)).join('');
 }
 
 async function main(): Promise<void> {

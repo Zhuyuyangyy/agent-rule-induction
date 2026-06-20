@@ -1,3 +1,4 @@
+/** @deprecated Use p1Benchmark.ts instead. Kept temporarily for backward compatibility. */
 // P1 symbolic-expression TheoryScore.
 //
 // Per docs/theory-score.md §3, P1 score is the *only* allowed score form for

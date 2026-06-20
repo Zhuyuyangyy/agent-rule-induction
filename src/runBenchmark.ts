@@ -96,7 +96,7 @@ async function main() {
     return;
   }
 
-  console.log('\n--- LLM baselines (passive, scaffold, active) ---');
+  console.log('\n--- LLM baselines (passive, scaffold, active, active_random) ---');
   const commonArgs = [
     '--tasks', tasksPath,
     '--experiment-id', opt.experimentId,
@@ -111,6 +111,7 @@ async function main() {
   runCli(npx, ['tsx', 'src/runPassive.ts', ...commonArgs], 'passive');
   runCli(npx, ['tsx', 'src/runScaffold.ts', ...commonArgs], 'scaffold');
   runCli(npx, ['tsx', 'src/runActive.ts', ...commonArgs], 'active');
+  runCli(npx, ['tsx', 'src/runActiveRandom.ts', ...commonArgs], 'active_random');
 
   // 4. Re-run analysis to include LLM conditions
   console.log('\n--- Final analysis (all conditions) ---');
