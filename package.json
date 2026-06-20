@@ -14,6 +14,8 @@
     "benchmark-no-llm": "tsx src/runBenchmark.ts --n 100 --seed 42 --result-dir results --skip-llm",
     "p1:benchmark": "tsx src/p1/benchmark.ts --n 60 --seed 42 --skip-llm",
     "p1:test": "tsx src/p1/test.ts",
+    "p1-benchmark": "tsx src/p1/p1Benchmark.ts --n 60 --seed 42 --noise 0 --output results/p1_report.json",
+    "p1-benchmark-noisy": "tsx src/p1/p1Benchmark.ts --n 60 --seed 42 --noise 0.05 --output results/p1_report_noisy.json",
     "test": "tsx src/test.ts && tsx src/testApiSafety.ts && tsx src/testParseResponse.ts && tsx src/testRunnerMock.ts",
     "typecheck": "tsc --noEmit"
   },

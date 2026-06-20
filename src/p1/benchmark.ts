@@ -289,7 +289,7 @@ export function runBruteForceSimple(task: P1Task): BaselineResult {
     }
   }
 
-  const expr = best?.expr ?? { type: 'num', value: 0 };
+  const expr = (best as { expr: ExprNode; acc: number; mse: number } | null)?.expr ?? { type: 'num' as const, value: 0 };
   return finalizeBaseline(task, 'brute_force_simple', expr, 0);
 }
 

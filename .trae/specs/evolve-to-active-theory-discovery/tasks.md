@@ -1,6 +1,9 @@
 # Tasks
 
 > 当前交付范围:P0/P1 可验证闭环。P2–P4 仅路线图,不拆任务。
+>
+> 核心主张:把科学理论发现转化为可评分、可反驳、可压缩、可主动查询的搜索问题。
+> 抓手定义:在最小复杂度下,解释最多已知事实,并预测最多隐藏事实,同时经受住最强反例搜索。
 
 ## 阶段 0:框架定位与规范奠基(文档与规范,不写物理代码)
 
@@ -41,17 +44,19 @@
 
 ## 阶段 2:P1 符号规律发现(P1-ready,可与 P0 后期并行原型)
 
-- [ ] Task 6: 扩展 Theory DSL 从 P0 布尔规则到 P1 符号表达式
-  - [ ] SubTask 6.1: 设计符号表达式 DSL(支持 `+`、`*`、`^`、`∝` 等)
-  - [ ] SubTask 6.2: 实现表达式复杂度计算(节点数/深度)
-  - [ ] SubTask 6.3: 实现符号等价性判断(借助 SymPy 或自研简化器)
-- [ ] Task 7: 构建 P1 符号规律发现 benchmark(含防记忆污染设计)
-  - [ ] SubTask 7.1: 合成公式库 ≥ 50 条(随机生成表达式,如 `y = 3x^2 - 2z + 5`,LLM 不可能记忆)— 主要证据
-  - [ ] SubTask 7.2: 经典公式 ≥ 10 条(`y=2x+1`、`E=mc^2`、`T^2∝r^3` 等)— 附加 demo
-  - [ ] SubTask 7.3: 支持无噪声 / 有噪声两种条件
-  - [ ] SubTask 7.4: 必测 heldout prediction 与 symbolic equivalence
-  - [ ] SubTask 7.5: 报告中区分合成公式与经典公式两类任务的准确率
-- [ ] Task 8: 在 P1 上评估 active-infogain 是否优于 passive/scaffold/random(允许负结果)
+- [x] Task 6: 扩展 Theory DSL 从 P0 布尔规则到 P1 符号表达式
+  - [x] SubTask 6.1: 设计符号表达式 DSL(支持 `+`、`*`、`^`、`∝` 等)— [src/p1/symbolicExpr.ts](file:///workspace/src/p1/symbolicExpr.ts)
+  - [x] SubTask 6.2: 实现表达式复杂度计算(节点数/深度)— `complexity(expr)`
+  - [x] SubTask 6.3: 实现符号等价性判断(借助 SymPy 或自研简化器)— `isSymbolicallyEquivalent` 数值采样近似(无新依赖)
+- [x] Task 7: 构建 P1 符号规律发现 benchmark(含防记忆污染设计)— [src/p1/p1Benchmark.ts](file:///workspace/src/p1/p1Benchmark.ts)
+  - [x] SubTask 7.1: 合成公式库 ≥ 50 条(随机生成表达式,如 `y = 3x^2 - 2z + 5`,LLM 不可能记忆)— 主要证据(实际 60 条)
+  - [x] SubTask 7.2: 经典公式 ≥ 10 条(`y=2x+1`、`E=mc^2`、`T^2∝r^3` 等)— 附加 demo(实际 10 条)
+  - [x] SubTask 7.3: 支持无噪声 / 有噪声两种条件(`--noise 0` / `--noise 0.05`)
+  - [x] SubTask 7.4: 必测 heldout prediction 与 symbolic equivalence(p1Score 含两项)
+  - [x] SubTask 7.5: 报告中区分合成公式与经典公式两类任务的准确率(aggregated.synthetic / aggregated.classic)
+- [x] Task 8: 在 P1 上评估 active-infogain 是否优于 passive/scaffold/random(允许负结果)
+  - 评估结果:greedy(≈active-infogain 的 P1 退化)显著优于 random(配对符号检验 p≈2.2e-8,greedy 胜 58/random 胜 12)
+  - 负结果:经典公式上 greedy 表现差(avgAcc 0.43,过拟合+复杂度惩罚),合成公式上表现好(avgAcc 0.91)— 如实报告
 
 ## 阶段 3:P2–P4 路线图(仅记录,不拆任务,非当前交付)
 

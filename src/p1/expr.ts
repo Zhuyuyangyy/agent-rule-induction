@@ -375,7 +375,9 @@ function combineProductTerms(terms: ExprNode[]): ExprNode[] {
   }
 
   const out: ExprNode[] = [];
-  if (constProd !== 1 || (symbolic.length === 0 && constProd !== 0)) out.push(num(constProd));
+  const isNotOne = constProd !== 1;
+  const isNotZero = constProd !== 0;
+  if (isNotOne || (symbolic.length === 0 && isNotZero)) out.push(num(constProd));
   for (const s of symbolic) {
     if (s.exp === 0) continue;
     if (s.exp === 1) out.push(s.base);
