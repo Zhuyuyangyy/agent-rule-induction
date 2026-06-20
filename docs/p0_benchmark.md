@@ -39,20 +39,22 @@ P0Score(T) = heldout_accuracy(T) - rule_length_penalty(T) - query_cost_penalty(T
 
 | Condition | Accuracy | Avg Queries | Avg Tokens | Invalid Rate | Main Failure |
 |-----------|----------|-------------|------------|--------------|--------------|
-| active_random (algo) | 62.0% | 4.82 | 0 | 0.0% | version_space_mismatch |
-| active_infogain (algo) | 100.0% | 3.34 | 0 | 0.0% | — |
-| oracle | 100.0% | 3.34 | 0 | 0.0% | — |
-| active (LLM) | 17.0% | 4.74 | 3754 | 0.0% | overconfident_guess |
-| passive (LLM) | 4.0% | 0.00 | 357 | 1.0% | overconfident_guess |
-| scaffold (LLM) | 28.7% | 4.56 | 7627 | 0.0% | wrong_rule |
+| algorithmic_random_query | 62.0% | 4.82 | 0 | 0.0% | version_space_mismatch |
+| algorithmic_infogain | 100.0% | 3.34 | 0 | 0.0% | — |
+| oracle_version_space | 100.0% | 3.34 | 0 | 0.0% | — |
+| llm_active | 17.0% | 4.74 | 3754 | 0.0% | overconfident_guess |
+| llm_passive | 4.0% | 0.00 | 357 | 1.0% | overconfident_guess |
+| llm_scaffold | 27.0% | 4.53 | 7621 | 0.0% | wrong_rule |
 
 ### Key Findings
 
-1. **Algorithm-level**: active-infogain achieves 100% accuracy with optimal query efficiency (3.34 queries), matching oracle upper bound. It significantly outperforms active-random (62%, p<0.0001, d=0.779).
+1. **Algorithm-level**: algorithmic_infogain achieves 100% accuracy with optimal query efficiency (3.34 queries), matching oracle_version_space upper bound. It significantly outperforms algorithmic_random_query (62%, p<0.0001, d=0.779).
 
-2. **LLM-level**: The LLM (deepseek-chat) does not effectively utilize active querying information. Active-infogain (17%) underperforms even active-random (62%) at the algorithm level. Main failure modes: overconfident_guess (30), version_space_mismatch (24), wrong_rule (29).
+2. **LLM-level**: The LLM (deepseek-chat) does not effectively utilize active querying information. llm_active (17%) underperforms even algorithmic_random_query (62%) at the algorithm level. Main failure modes: overconfident_guess (30), version_space_mismatch (24), wrong_rule (29).
 
-3. **Negative result honestly reported**: The gap between algorithm-level and LLM-level performance is a significant finding. The algorithm works; the LLM implementation needs improvement.
+3. **Main conclusion**: Algorithmic Active-InfoGain reaches the Oracle upper bound in P0, while LLM agents underperform. This supports the need for external verifiable search mechanisms rather than relying on raw LLM reasoning.
+
+4. **Negative result honestly reported**: The gap between algorithm-level and LLM-level performance is a significant finding. The algorithm works; the LLM implementation needs improvement.
 
 ## Reproduction
 

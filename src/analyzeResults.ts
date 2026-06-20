@@ -6,6 +6,13 @@ import type { Task } from './taskGenerator.js';
 import type { RunResult } from './runActive.js';
 import { OutputManager, type ExperimentContext, type ResultRecord } from './apiSafety.js';
 
+const LLM_CONDITION_MAP: Record<string, string> = {
+  'passive': 'llm_passive',
+  'scaffold': 'llm_scaffold',
+  'active': 'llm_active',
+  'active_random': 'llm_active_random',
+};
+
 function mulberry32(seed: number): () => number {
   let s = seed | 0;
   return () => { s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
@@ -220,7 +227,7 @@ export function computeOracleUpperBound(tasks: Task[]): OracleUpperBound {
     avgQueries,
     vsSizeOneRate: vsSizeOne / n,
     avgFinalVS,
-    description: 'Oracle uses greedy information-gain queries and always selects the true rule. ' +
+    description: 'Oracle (version-space) uses greedy information-gain queries and always selects the true rule. ' +
       'Accuracy=1.0 is the theoretical upper bound. avgQueries is the minimum query cost under optimal strategy. ' +
       'vsSizeOneRate is the fraction of tasks fully solvable (VS reduced to 1) within the query budget.',
   };
@@ -248,18 +255,18 @@ export function analyze(resultDir: string, tasksPath: string): AnalysisReport {
   const greedyResults = runGreedyBaseline(tasks);
   const oracleResults = runOracleBaseline(tasks);
 
-  const randomDir = writeBaselineResults(randomResults, 'active_random', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'active_random'));
-  const greedyDir = writeBaselineResults(greedyResults, 'active_infogain', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'active_infogain'));
-  const oracleDir = writeBaselineResults(oracleResults, 'oracle', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'oracle'));
-  console.log(`  Wrote active_random -> ${randomDir}`);
-  console.log(`  Wrote active_infogain -> ${greedyDir}`);
-  console.log(`  Wrote oracle -> ${oracleDir}`);
+  const randomDir = writeBaselineResults(randomResults, 'algorithmic_random_query', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'active_random'));
+  const greedyDir = writeBaselineResults(greedyResults, 'algorithmic_infogain', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'active_infogain'));
+  const oracleDir = writeBaselineResults(oracleResults, 'oracle_version_space', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'oracle'));
+  console.log(`  Wrote algorithmic_random_query -> ${randomDir}`);
+  console.log(`  Wrote algorithmic_infogain -> ${greedyDir}`);
+  console.log(`  Wrote oracle_version_space -> ${oracleDir}`);
 
   // Collect all conditions (algorithmic + LLM-based from resultDir)
   const conditions: { name: string; results: RunResult[] }[] = [
-    { name: 'active_random', results: randomResults },
-    { name: 'active_infogain', results: greedyResults },
-    { name: 'oracle', results: oracleResults },
+    { name: 'algorithmic_random_query', results: randomResults },
+    { name: 'algorithmic_infogain', results: greedyResults },
+    { name: 'oracle_version_space', results: oracleResults },
   ];
 
   // Load LLM-based conditions from resultDir (passive, scaffold, active, etc.)
@@ -269,7 +276,8 @@ export function analyze(resultDir: string, tasksPath: string): AnalysisReport {
       if (fs.existsSync(jsonlPath)) {
         try {
           const results = loadResults(jsonlPath);
-          if (results.length > 0) conditions.push({ name: d.name, results });
+          const displayName = LLM_CONDITION_MAP[d.name] || d.name;
+          if (results.length > 0) conditions.push({ name: displayName, results });
         } catch (e: any) { console.error(`Cannot load ${jsonlPath}: ${e.message}`); }
       }
     }
@@ -302,12 +310,12 @@ export function analyze(resultDir: string, tasksPath: string): AnalysisReport {
   // Significance tests: compare each condition vs active_random (baseline) on accuracy
   const significance: SignificanceResult[] = [];
   for (const c of conditions) {
-    if (c.name === 'active_random') continue;
-    const sig = pairedTTestBinary(randomResults, c.results, 'active_random', c.name, 'accuracy');
+    if (c.name === 'algorithmic_random_query') continue;
+    const sig = pairedTTestBinary(randomResults, c.results, 'algorithmic_random_query', c.name, 'accuracy');
     if (sig) significance.push(sig);
   }
-  // Also compare active_infogain vs oracle on query_count
-  const sigQuery = pairedTTestBinary(greedyResults, oracleResults, 'active_infogain', 'oracle', 'query_count');
+  // Also compare algorithmic_infogain vs oracle_version_space on query_count
+  const sigQuery = pairedTTestBinary(greedyResults, oracleResults, 'algorithmic_infogain', 'oracle_version_space', 'query_count');
   if (sigQuery) significance.push(sigQuery);
 
   console.log('\nSignificance Tests (paired t-test, two-tailed, normal approx):');
@@ -386,12 +394,22 @@ export function analyze(resultDir: string, tasksPath: string): AnalysisReport {
   for (const m of allMetrics) {
     md += `| ${m.condition} | ${m.totalTasks} | ${(m.accuracy * 100).toFixed(1)}% | ${m.avgQueries.toFixed(2)} | ${m.avgTokens.toFixed(0)} | ${m.avgFinalVS.toFixed(2)} | ${(m.invalidOutputRate * 100).toFixed(1)}% | ${m.queryEfficiency.toFixed(3)} |\n`;
   }
+  // Add note for conditions with fewer tasks than the benchmark total
+  const expectedTotalTasks = tasks.length;
+  const incompleteConditions = allMetrics.filter(m => m.totalTasks < expectedTotalTasks);
+  if (incompleteConditions.length > 0) {
+    md += '\n';
+    for (const ic of incompleteConditions) {
+      md += `Note: ${ic.condition} completed ${ic.totalTasks}/${expectedTotalTasks} tasks due to API/runtime issues; metrics are computed on completed tasks only.\n`;
+    }
+  }
   md += '\n## Failure Type Breakdown\n\n';
-  md += '| Condition | correct | wrong_rule | invalid_json | overconfident_guess | version_space_mismatch | api_error |\n';
-  md += '|-----------|---------|------------|--------------|---------------------|----------------------|----------|\n';
+  const ALL_FAILURE_TYPES = ['correct', 'wrong_rule', 'insufficient_queries', 'invalid_json', 'overconfident_guess', 'version_space_mismatch', 'timeout', 'api_error'] as const;
+  md += '| Condition | ' + ALL_FAILURE_TYPES.join(' | ') + ' |\n';
+  md += '|-----------|' + ALL_FAILURE_TYPES.map(() => '---------|').join('') + '\n';
   for (const m of allMetrics) {
     const ft = m.failureTypeCounts;
-    md += `| ${m.condition} | ${ft.correct || 0} | ${ft.wrong_rule || 0} | ${ft.invalid_json || ft.no_answer || 0} | ${ft.overconfident_guess || 0} | ${ft.version_space_mismatch || ft.ambiguous_vs || 0} | ${ft.api_error || 0} |\n`;
+    md += `| ${m.condition} | ${ALL_FAILURE_TYPES.map(t => ft[t] || 0).join(' | ')} |\n`;
   }
   md += '\n## Significance Tests\n\n';
   md += "| Comparison | Metric | Mean A | Mean B | t-stat | p-value | Cohen's d | Significant |\n";
