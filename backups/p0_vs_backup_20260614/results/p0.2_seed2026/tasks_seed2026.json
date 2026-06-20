@@ -1,0 +1,2056 @@
+[
+  {
+    "taskId": "task_455407",
+    "trueRuleId": "GT_x0_2",
+    "initialObservations": [
+      {
+        "input": [
+          9,
+          6,
+          7
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          1,
+          5,
+          5
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          7,
+          4,
+          1
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EVEN_x1",
+      "GT_x0_2",
+      "GT_x0_4",
+      "GT_x0_6",
+      "ORDER_x1_x0",
+      "ORDER_x2_x0"
+    ],
+    "seed": 455407
+  },
+  {
+    "taskId": "task_308496",
+    "trueRuleId": "LT_x2_4",
+    "initialObservations": [
+      {
+        "input": [
+          2,
+          5,
+          6
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          4,
+          7,
+          0
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_4",
+      "EQ_x2_0",
+      "GT_x0_2",
+      "GT_x1_6",
+      "LT_x2_2",
+      "LT_x2_4",
+      "LT_x2_6",
+      "ORDER_x2_x0",
+      "ORDER_x2_x1"
+    ],
+    "seed": 308496
+  },
+  {
+    "taskId": "task_661157",
+    "trueRuleId": "GT_x1_4",
+    "initialObservations": [
+      {
+        "input": [
+          3,
+          6,
+          2
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          5,
+          5,
+          5
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "ODD_x0",
+      "GT_x0_2",
+      "GT_x1_2",
+      "GT_x1_4",
+      "LT_x0_6",
+      "LT_x0_8",
+      "LT_x1_8",
+      "LT_x2_6",
+      "LT_x2_8"
+    ],
+    "seed": 661157
+  },
+  {
+    "taskId": "task_618475",
+    "trueRuleId": "EQ_x0_6",
+    "initialObservations": [
+      {
+        "input": [
+          2,
+          7,
+          0
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          2,
+          3,
+          6
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          5,
+          7,
+          5
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "EVEN_x1",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_8",
+      "GT_x2_6",
+      "GT_x2_8",
+      "LT_x0_2",
+      "LT_x1_2",
+      "ORDER_x1_x0"
+    ],
+    "seed": 618475
+  },
+  {
+    "taskId": "task_152280",
+    "trueRuleId": "EQ_x0_0",
+    "initialObservations": [
+      {
+        "input": [
+          8,
+          8,
+          5
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          0,
+          2,
+          0
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x1_2",
+      "EQ_x2_0",
+      "EVEN_x2",
+      "LT_x0_2",
+      "LT_x0_4",
+      "LT_x0_6",
+      "LT_x0_8",
+      "LT_x1_4",
+      "LT_x1_6",
+      "LT_x1_8",
+      "LT_x2_2",
+      "LT_x2_4",
+      "ORDER_x0_x1"
+    ],
+    "seed": 152280
+  },
+  {
+    "taskId": "task_221843",
+    "trueRuleId": "EQ_x0_2",
+    "initialObservations": [
+      {
+        "input": [
+          8,
+          5,
+          9
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          7,
+          6,
+          7
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "EQ_x2_6",
+      "EVEN_x2",
+      "GT_x0_8",
+      "GT_x1_6",
+      "GT_x1_8",
+      "LT_x0_2",
+      "LT_x0_4",
+      "LT_x0_6",
+      "LT_x1_2",
+      "LT_x1_4",
+      "LT_x2_2",
+      "LT_x2_4",
+      "LT_x2_6",
+      "ORDER_x0_x1",
+      "ORDER_x2_x0",
+      "ORDER_x2_x1"
+    ],
+    "seed": 221843
+  },
+  {
+    "taskId": "task_682859",
+    "trueRuleId": "ODD_x0",
+    "initialObservations": [
+      {
+        "input": [
+          0,
+          5,
+          5
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          7,
+          9,
+          8
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          3,
+          3,
+          8
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EVEN_x2",
+      "ODD_x0",
+      "GT_x0_2",
+      "GT_x2_6"
+    ],
+    "seed": 682859
+  },
+  {
+    "taskId": "task_801408",
+    "trueRuleId": "GT_x0_6",
+    "initialObservations": [
+      {
+        "input": [
+          2,
+          3,
+          7
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          0,
+          1,
+          5
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "EQ_x2_6",
+      "EVEN_x1",
+      "EVEN_x2",
+      "ODD_x0",
+      "GT_x0_2",
+      "GT_x0_4",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_4",
+      "GT_x1_6",
+      "GT_x1_8",
+      "GT_x2_8",
+      "LT_x2_2",
+      "LT_x2_4",
+      "ORDER_x1_x0",
+      "ORDER_x2_x0",
+      "ORDER_x2_x1"
+    ],
+    "seed": 801408
+  },
+  {
+    "taskId": "task_293468",
+    "trueRuleId": "ORDER_x0_x1",
+    "initialObservations": [
+      {
+        "input": [
+          2,
+          8,
+          6
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          7,
+          3,
+          8
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_2",
+      "EQ_x2_6",
+      "EVEN_x0",
+      "EVEN_x1",
+      "GT_x1_4",
+      "GT_x1_6",
+      "LT_x0_4",
+      "LT_x0_6",
+      "LT_x2_8",
+      "ORDER_x0_x1",
+      "ORDER_x2_x1"
+    ],
+    "seed": 293468
+  },
+  {
+    "taskId": "task_42668",
+    "trueRuleId": "GT_x2_4",
+    "initialObservations": [
+      {
+        "input": [
+          9,
+          4,
+          2
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          5,
+          5,
+          4
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          1,
+          1,
+          8
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "GT_x2_4",
+      "GT_x2_6",
+      "LT_x0_2",
+      "LT_x0_4",
+      "LT_x1_2",
+      "LT_x1_4",
+      "ORDER_x0_x2",
+      "ORDER_x1_x2"
+    ],
+    "seed": 42668
+  },
+  {
+    "taskId": "task_66587",
+    "trueRuleId": "EQ_x2_6",
+    "initialObservations": [
+      {
+        "input": [
+          7,
+          5,
+          1
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          3,
+          6,
+          7
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "EQ_x2_6",
+      "EVEN_x0",
+      "EVEN_x2",
+      "GT_x0_8",
+      "GT_x1_6",
+      "GT_x1_8",
+      "GT_x2_8",
+      "LT_x0_2",
+      "LT_x1_2",
+      "LT_x1_4"
+    ],
+    "seed": 66587
+  },
+  {
+    "taskId": "task_619580",
+    "trueRuleId": "GT_x0_8",
+    "initialObservations": [
+      {
+        "input": [
+          2,
+          3,
+          9
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          2,
+          7,
+          7
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "EQ_x2_6",
+      "EVEN_x1",
+      "EVEN_x2",
+      "ODD_x0",
+      "GT_x0_2",
+      "GT_x0_4",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_8",
+      "LT_x0_2",
+      "LT_x1_2",
+      "LT_x2_2",
+      "LT_x2_4",
+      "LT_x2_6",
+      "ORDER_x1_x0",
+      "ORDER_x2_x0",
+      "ORDER_x2_x1"
+    ],
+    "seed": 619580
+  },
+  {
+    "taskId": "task_388810",
+    "trueRuleId": "EVEN_x2",
+    "initialObservations": [
+      {
+        "input": [
+          6,
+          6,
+          0
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          3,
+          3,
+          6
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          5,
+          8,
+          3
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EVEN_x2",
+      "LT_x1_8"
+    ],
+    "seed": 388810
+  },
+  {
+    "taskId": "task_114502",
+    "trueRuleId": "EQ_x0_2",
+    "initialObservations": [
+      {
+        "input": [
+          7,
+          9,
+          6
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          8,
+          4,
+          0
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          3,
+          9,
+          1
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_6",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "GT_x0_8",
+      "GT_x2_6",
+      "GT_x2_8",
+      "LT_x0_2",
+      "LT_x1_2",
+      "LT_x1_4",
+      "ORDER_x0_x2",
+      "ORDER_x1_x2"
+    ],
+    "seed": 114502
+  },
+  {
+    "taskId": "task_179494",
+    "trueRuleId": "EQ_x2_6",
+    "initialObservations": [
+      {
+        "input": [
+          5,
+          4,
+          7
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          1,
+          5,
+          2
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_4",
+      "EQ_x2_6",
+      "EVEN_x0",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_6",
+      "GT_x1_8",
+      "GT_x2_8",
+      "LT_x1_2",
+      "LT_x1_4",
+      "LT_x2_2",
+      "ORDER_x2_x0"
+    ],
+    "seed": 179494
+  },
+  {
+    "taskId": "task_331060",
+    "trueRuleId": "LT_x1_4",
+    "initialObservations": [
+      {
+        "input": [
+          8,
+          7,
+          1
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          1,
+          3,
+          3
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          2,
+          1,
+          3
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "GT_x2_2",
+      "LT_x0_4",
+      "LT_x0_6",
+      "LT_x0_8",
+      "LT_x1_4",
+      "LT_x1_6",
+      "ORDER_x0_x2"
+    ],
+    "seed": 331060
+  },
+  {
+    "taskId": "task_406700",
+    "trueRuleId": "GT_x0_4",
+    "initialObservations": [
+      {
+        "input": [
+          3,
+          1,
+          4
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          0,
+          8,
+          1
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_6",
+      "GT_x0_4",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_8",
+      "GT_x2_4",
+      "GT_x2_6",
+      "GT_x2_8",
+      "ORDER_x2_x0"
+    ],
+    "seed": 406700
+  },
+  {
+    "taskId": "task_920866",
+    "trueRuleId": "EQ_x0_6",
+    "initialObservations": [
+      {
+        "input": [
+          6,
+          0,
+          1
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          7,
+          1,
+          5
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EVEN_x0",
+      "EVEN_x1",
+      "LT_x2_2",
+      "LT_x2_4"
+    ],
+    "seed": 920866
+  },
+  {
+    "taskId": "task_565062",
+    "trueRuleId": "ORDER_x1_x2",
+    "initialObservations": [
+      {
+        "input": [
+          3,
+          7,
+          3
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          9,
+          4,
+          4
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_6",
+      "EVEN_x0",
+      "GT_x1_8",
+      "GT_x2_4",
+      "GT_x2_6",
+      "GT_x2_8",
+      "LT_x0_2",
+      "LT_x1_2",
+      "LT_x1_4",
+      "LT_x2_2",
+      "ORDER_x0_x2",
+      "ORDER_x1_x2"
+    ],
+    "seed": 565062
+  },
+  {
+    "taskId": "task_1731",
+    "trueRuleId": "EVEN_x1",
+    "initialObservations": [
+      {
+        "input": [
+          9,
+          7,
+          3
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          8,
+          6,
+          2
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          8,
+          1,
+          0
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x1_6",
+      "EQ_x2_2",
+      "EVEN_x1"
+    ],
+    "seed": 1731
+  },
+  {
+    "taskId": "task_203828",
+    "trueRuleId": "ORDER_x1_x0",
+    "initialObservations": [
+      {
+        "input": [
+          1,
+          3,
+          8
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          2,
+          1,
+          8
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_2",
+      "EVEN_x0",
+      "LT_x1_2",
+      "ORDER_x1_x0"
+    ],
+    "seed": 203828
+  },
+  {
+    "taskId": "task_276094",
+    "trueRuleId": "ORDER_x0_x1",
+    "initialObservations": [
+      {
+        "input": [
+          6,
+          1,
+          1
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          8,
+          5,
+          0
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "EQ_x2_6",
+      "EVEN_x1",
+      "ODD_x0",
+      "GT_x0_8",
+      "GT_x1_6",
+      "GT_x1_8",
+      "GT_x2_2",
+      "GT_x2_4",
+      "GT_x2_6",
+      "GT_x2_8",
+      "LT_x0_2",
+      "LT_x0_4",
+      "LT_x0_6",
+      "ORDER_x0_x1",
+      "ORDER_x0_x2",
+      "ORDER_x1_x2"
+    ],
+    "seed": 276094
+  },
+  {
+    "taskId": "task_778052",
+    "trueRuleId": "EQ_x1_6",
+    "initialObservations": [
+      {
+        "input": [
+          2,
+          0,
+          8
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          5,
+          6,
+          3
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          3,
+          9,
+          1
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x1_6",
+      "GT_x0_4"
+    ],
+    "seed": 778052
+  },
+  {
+    "taskId": "task_953404",
+    "trueRuleId": "GT_x1_6",
+    "initialObservations": [
+      {
+        "input": [
+          0,
+          6,
+          9
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          3,
+          5,
+          6
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "GT_x0_4",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_6",
+      "GT_x1_8",
+      "LT_x1_2",
+      "LT_x1_4",
+      "LT_x2_2",
+      "LT_x2_4",
+      "LT_x2_6",
+      "ORDER_x1_x0",
+      "ORDER_x2_x0",
+      "ORDER_x2_x1"
+    ],
+    "seed": 953404
+  },
+  {
+    "taskId": "task_942203",
+    "trueRuleId": "ORDER_x2_x0",
+    "initialObservations": [
+      {
+        "input": [
+          5,
+          3,
+          4
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          2,
+          9,
+          3
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x2_4",
+      "EVEN_x2",
+      "ODD_x0",
+      "GT_x0_2",
+      "GT_x0_4",
+      "LT_x1_4",
+      "LT_x1_6",
+      "LT_x1_8",
+      "ORDER_x1_x0",
+      "ORDER_x1_x2",
+      "ORDER_x2_x0"
+    ],
+    "seed": 942203
+  },
+  {
+    "taskId": "task_765157",
+    "trueRuleId": "EQ_x2_0",
+    "initialObservations": [
+      {
+        "input": [
+          6,
+          0,
+          4
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          5,
+          5,
+          4
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          6,
+          5,
+          6
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "ODD_x2",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_6",
+      "GT_x1_8",
+      "GT_x2_6",
+      "GT_x2_8",
+      "LT_x0_2",
+      "LT_x0_4",
+      "LT_x2_2",
+      "LT_x2_4",
+      "ORDER_x0_x1",
+      "ORDER_x0_x2"
+    ],
+    "seed": 765157
+  },
+  {
+    "taskId": "task_278494",
+    "trueRuleId": "GT_x0_8",
+    "initialObservations": [
+      {
+        "input": [
+          1,
+          2,
+          2
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          7,
+          5,
+          4
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_6",
+      "EVEN_x0",
+      "ODD_x2",
+      "GT_x0_8",
+      "GT_x1_6",
+      "GT_x1_8",
+      "GT_x2_4",
+      "GT_x2_6",
+      "GT_x2_8",
+      "LT_x1_2",
+      "LT_x2_2",
+      "ORDER_x1_x2"
+    ],
+    "seed": 278494
+  },
+  {
+    "taskId": "task_274095",
+    "trueRuleId": "GT_x0_4",
+    "initialObservations": [
+      {
+        "input": [
+          1,
+          2,
+          6
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          0,
+          7,
+          9
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "GT_x0_2",
+      "GT_x0_4",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_8",
+      "LT_x1_2",
+      "LT_x2_2",
+      "LT_x2_4",
+      "LT_x2_6",
+      "ORDER_x1_x0",
+      "ORDER_x2_x0",
+      "ORDER_x2_x1"
+    ],
+    "seed": 274095
+  },
+  {
+    "taskId": "task_414027",
+    "trueRuleId": "GT_x2_8",
+    "initialObservations": [
+      {
+        "input": [
+          0,
+          0,
+          1
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          4,
+          3,
+          6
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_2",
+      "EQ_x0_6",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "ODD_x0",
+      "GT_x0_4",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_4",
+      "GT_x1_6",
+      "GT_x1_8",
+      "GT_x2_6",
+      "GT_x2_8",
+      "ORDER_x0_x1",
+      "ORDER_x2_x0",
+      "ORDER_x2_x1"
+    ],
+    "seed": 414027
+  },
+  {
+    "taskId": "task_286655",
+    "trueRuleId": "ORDER_x0_x2",
+    "initialObservations": [
+      {
+        "input": [
+          9,
+          1,
+          5
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          1,
+          5,
+          5
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          5,
+          3,
+          5
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "GT_x1_4",
+      "LT_x0_2",
+      "LT_x0_4",
+      "ORDER_x0_x1",
+      "ORDER_x0_x2"
+    ],
+    "seed": 286655
+  },
+  {
+    "taskId": "task_663779",
+    "trueRuleId": "LT_x0_6",
+    "initialObservations": [
+      {
+        "input": [
+          5,
+          7,
+          3
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          3,
+          6,
+          8
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "ODD_x0",
+      "GT_x0_2",
+      "GT_x1_2",
+      "GT_x1_4",
+      "GT_x2_2",
+      "LT_x0_6",
+      "LT_x0_8",
+      "LT_x1_8",
+      "ORDER_x0_x1"
+    ],
+    "seed": 663779
+  },
+  {
+    "taskId": "task_842450",
+    "trueRuleId": "GT_x0_2",
+    "initialObservations": [
+      {
+        "input": [
+          3,
+          6,
+          8
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          2,
+          6,
+          3
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EVEN_x2",
+      "ODD_x0",
+      "GT_x0_2",
+      "GT_x2_4",
+      "GT_x2_6",
+      "ORDER_x1_x2"
+    ],
+    "seed": 842450
+  },
+  {
+    "taskId": "task_301185",
+    "trueRuleId": "LT_x1_6",
+    "initialObservations": [
+      {
+        "input": [
+          1,
+          8,
+          6
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          4,
+          0,
+          5
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          0,
+          1,
+          1
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EVEN_x0",
+      "ODD_x2",
+      "LT_x1_2",
+      "LT_x1_4",
+      "LT_x1_6",
+      "LT_x1_8",
+      "LT_x2_6"
+    ],
+    "seed": 301185
+  },
+  {
+    "taskId": "task_918641",
+    "trueRuleId": "EQ_x1_0",
+    "initialObservations": [
+      {
+        "input": [
+          7,
+          8,
+          2
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          4,
+          9,
+          0
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_4",
+      "EQ_x2_6",
+      "ODD_x2",
+      "GT_x0_8",
+      "GT_x2_2",
+      "GT_x2_4",
+      "GT_x2_6",
+      "GT_x2_8",
+      "LT_x0_2",
+      "LT_x0_4",
+      "LT_x1_2",
+      "LT_x1_4",
+      "LT_x1_6",
+      "LT_x1_8",
+      "ORDER_x0_x2",
+      "ORDER_x1_x0",
+      "ORDER_x1_x2"
+    ],
+    "seed": 918641
+  },
+  {
+    "taskId": "task_80378",
+    "trueRuleId": "LT_x0_2",
+    "initialObservations": [
+      {
+        "input": [
+          6,
+          1,
+          6
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          9,
+          8,
+          4
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "ODD_x2",
+      "GT_x1_8",
+      "GT_x2_6",
+      "GT_x2_8",
+      "LT_x0_2",
+      "LT_x0_4",
+      "LT_x0_6",
+      "LT_x2_2",
+      "LT_x2_4",
+      "ORDER_x0_x1",
+      "ORDER_x0_x2"
+    ],
+    "seed": 80378
+  },
+  {
+    "taskId": "task_40804",
+    "trueRuleId": "LT_x1_8",
+    "initialObservations": [
+      {
+        "input": [
+          0,
+          4,
+          4
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          6,
+          6,
+          0
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          4,
+          5,
+          4
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EVEN_x0",
+      "EVEN_x2",
+      "GT_x1_2",
+      "LT_x0_8",
+      "LT_x1_8",
+      "LT_x2_6",
+      "LT_x2_8"
+    ],
+    "seed": 40804
+  },
+  {
+    "taskId": "task_335375",
+    "trueRuleId": "ORDER_x1_x2",
+    "initialObservations": [
+      {
+        "input": [
+          5,
+          4,
+          8
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          9,
+          1,
+          9
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "ODD_x0",
+      "GT_x0_2",
+      "GT_x0_4",
+      "GT_x2_2",
+      "GT_x2_4",
+      "GT_x2_6",
+      "LT_x1_6",
+      "LT_x1_8",
+      "ORDER_x1_x0",
+      "ORDER_x1_x2"
+    ],
+    "seed": 335375
+  },
+  {
+    "taskId": "task_773353",
+    "trueRuleId": "EQ_x1_0",
+    "initialObservations": [
+      {
+        "input": [
+          8,
+          7,
+          0
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          2,
+          4,
+          3
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          8,
+          6,
+          0
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "EQ_x2_6",
+      "ODD_x0",
+      "GT_x0_8",
+      "GT_x1_8",
+      "GT_x2_4",
+      "GT_x2_6",
+      "GT_x2_8",
+      "LT_x0_2",
+      "LT_x1_2",
+      "LT_x1_4",
+      "ORDER_x1_x2"
+    ],
+    "seed": 773353
+  },
+  {
+    "taskId": "task_741953",
+    "trueRuleId": "GT_x2_2",
+    "initialObservations": [
+      {
+        "input": [
+          4,
+          4,
+          6
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          4,
+          6,
+          4
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          3,
+          0,
+          7
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EVEN_x1",
+      "GT_x0_2",
+      "GT_x2_2",
+      "LT_x0_6",
+      "LT_x0_8",
+      "LT_x1_8",
+      "LT_x2_8"
+    ],
+    "seed": 741953
+  },
+  {
+    "taskId": "task_394907",
+    "trueRuleId": "LT_x2_6",
+    "initialObservations": [
+      {
+        "input": [
+          3,
+          9,
+          4
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          6,
+          4,
+          3
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          2,
+          5,
+          9
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "GT_x0_2",
+      "LT_x2_6",
+      "LT_x2_8",
+      "ORDER_x2_x1"
+    ],
+    "seed": 394907
+  },
+  {
+    "taskId": "task_967335",
+    "trueRuleId": "GT_x1_4",
+    "initialObservations": [
+      {
+        "input": [
+          9,
+          9,
+          9
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          1,
+          6,
+          1
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "ODD_x0",
+      "ODD_x2",
+      "GT_x1_2",
+      "GT_x1_4"
+    ],
+    "seed": 967335
+  },
+  {
+    "taskId": "task_676467",
+    "trueRuleId": "LT_x1_2",
+    "initialObservations": [
+      {
+        "input": [
+          4,
+          8,
+          1
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          4,
+          0,
+          9
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          5,
+          5,
+          0
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x1_0",
+      "GT_x2_2",
+      "GT_x2_4",
+      "GT_x2_6",
+      "GT_x2_8",
+      "LT_x1_2",
+      "LT_x1_4",
+      "ORDER_x0_x2",
+      "ORDER_x1_x0",
+      "ORDER_x1_x2"
+    ],
+    "seed": 676467
+  },
+  {
+    "taskId": "task_629185",
+    "trueRuleId": "LT_x2_8",
+    "initialObservations": [
+      {
+        "input": [
+          9,
+          8,
+          4
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          8,
+          8,
+          8
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          0,
+          7,
+          5
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "LT_x2_6",
+      "LT_x2_8",
+      "ORDER_x2_x1"
+    ],
+    "seed": 629185
+  },
+  {
+    "taskId": "task_365102",
+    "trueRuleId": "LT_x0_4",
+    "initialObservations": [
+      {
+        "input": [
+          8,
+          0,
+          9
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          4,
+          9,
+          6
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_6",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "ODD_x0",
+      "GT_x0_8",
+      "LT_x0_2",
+      "LT_x0_4",
+      "LT_x2_2",
+      "LT_x2_4",
+      "LT_x2_6",
+      "ORDER_x2_x0"
+    ],
+    "seed": 365102
+  },
+  {
+    "taskId": "task_31137",
+    "trueRuleId": "GT_x1_2",
+    "initialObservations": [
+      {
+        "input": [
+          7,
+          5,
+          8
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          7,
+          8,
+          1
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "ODD_x0",
+      "GT_x0_2",
+      "GT_x0_4",
+      "GT_x0_6",
+      "GT_x1_2",
+      "GT_x1_4",
+      "LT_x0_8"
+    ],
+    "seed": 31137
+  },
+  {
+    "taskId": "task_992953",
+    "trueRuleId": "ORDER_x2_x1",
+    "initialObservations": [
+      {
+        "input": [
+          1,
+          3,
+          8
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          7,
+          8,
+          6
+        ],
+        "output": true
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x2_6",
+      "EVEN_x1",
+      "GT_x0_2",
+      "GT_x0_4",
+      "GT_x0_6",
+      "GT_x1_4",
+      "GT_x1_6",
+      "LT_x2_8",
+      "ORDER_x2_x0",
+      "ORDER_x2_x1"
+    ],
+    "seed": 992953
+  },
+  {
+    "taskId": "task_182313",
+    "trueRuleId": "ODD_x0",
+    "initialObservations": [
+      {
+        "input": [
+          4,
+          7,
+          0
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          6,
+          4,
+          7
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_6",
+      "EQ_x2_2",
+      "EQ_x2_4",
+      "EQ_x2_6",
+      "ODD_x0",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_8",
+      "GT_x2_8",
+      "LT_x0_2",
+      "LT_x0_4",
+      "LT_x1_2",
+      "LT_x1_4"
+    ],
+    "seed": 182313
+  },
+  {
+    "taskId": "task_966624",
+    "trueRuleId": "GT_x0_4",
+    "initialObservations": [
+      {
+        "input": [
+          1,
+          6,
+          5
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          1,
+          3,
+          4
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          2,
+          0,
+          1
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_2",
+      "EQ_x1_4",
+      "EQ_x2_0",
+      "EQ_x2_2",
+      "EQ_x2_6",
+      "GT_x0_2",
+      "GT_x0_4",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_6",
+      "GT_x1_8",
+      "GT_x2_6",
+      "GT_x2_8"
+    ],
+    "seed": 966624
+  },
+  {
+    "taskId": "task_830991",
+    "trueRuleId": "GT_x0_6",
+    "initialObservations": [
+      {
+        "input": [
+          1,
+          4,
+          2
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          5,
+          1,
+          1
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x0_0",
+      "EQ_x0_2",
+      "EQ_x0_4",
+      "EQ_x0_6",
+      "EQ_x1_0",
+      "EQ_x1_2",
+      "EQ_x1_6",
+      "EQ_x2_0",
+      "EQ_x2_4",
+      "EQ_x2_6",
+      "EVEN_x0",
+      "GT_x0_6",
+      "GT_x0_8",
+      "GT_x1_4",
+      "GT_x1_6",
+      "GT_x1_8",
+      "GT_x2_2",
+      "GT_x2_4",
+      "GT_x2_6",
+      "GT_x2_8",
+      "ORDER_x1_x2"
+    ],
+    "seed": 830991
+  },
+  {
+    "taskId": "task_274367",
+    "trueRuleId": "EQ_x1_6",
+    "initialObservations": [
+      {
+        "input": [
+          3,
+          6,
+          7
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          9,
+          2,
+          8
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          1,
+          1,
+          3
+        ],
+        "output": false
+      }
+    ],
+    "versionSpaceRuleIds": [
+      "EQ_x1_6",
+      "GT_x1_2",
+      "GT_x1_4",
+      "ORDER_x0_x1"
+    ],
+    "seed": 274367
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "condition": "random_baseline",
+    "totalTasks": 50,
+    "accuracy": 0.76,
+    "avgQueries": 4.94,
+    "avgFinalVS": 2.16,
+    "avgVSReduction": 0.7968370199517257,
+    "duplicateQueryRate": 0,
+    "earlyStopRate": 0.46,
+    "partialCreditRate": 0.76,
+    "queryEfficiency": 0.15384615384615383
+  },
+  {
+    "condition": "greedy_baseline",
+    "totalTasks": 50,
+    "accuracy": 1,
+    "avgQueries": 3.38,
+    "avgFinalVS": 1,
+    "avgVSReduction": 0.8714054552201607,
+    "duplicateQueryRate": 0,
+    "earlyStopRate": 1,
+    "partialCreditRate": 1,
+    "queryEfficiency": 0.2958579881656805
+  },
+  {
+    "condition": "active",
+    "totalTasks": 50,
+    "accuracy": 0.02,
+    "avgQueries": 0,
+    "avgFinalVS": 12.88,
+    "avgVSReduction": 0,
+    "duplicateQueryRate": 0,
+    "earlyStopRate": 1,
+    "partialCreditRate": 0.02,
+    "queryEfficiency": 0.02
+  },
+  {
+    "condition": "passive",
+    "totalTasks": 50,
+    "accuracy": 0.42,
+    "avgQueries": 0,
+    "avgFinalVS": 2.58,
+    "avgVSReduction": 0.7640416600828364,
+    "duplicateQueryRate": 0,
+    "earlyStopRate": 1,
+    "partialCreditRate": 0.58,
+    "queryEfficiency": 0.42
+  }
+]
