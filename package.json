@@ -1,1 +1,28 @@
-{"name":"p0-vs","version":"0.1.0","type":"module","dependencies":{"openai":"^4.0.0"},"devDependencies":{"tsx":"^4.0.0","typescript":"^5.0.0"}}
+{
+  "name": "p0-vs",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Active Theory Discovery: P0 rule-induction benchmark with active query, version-space falsification, and SHA256-audited baselines.",
+  "scripts": {
+    "gen-tasks": "tsx src/taskGenerator.ts --n 100 --seed 42 --output results/tasks_seed42.json",
+    "run-passive": "tsx src/runPassive.ts --tasks results/tasks_seed42.json --experiment-id p0_benchmark --condition passive --overwrite",
+    "run-scaffold": "tsx src/runScaffold.ts --tasks results/tasks_seed42.json --experiment-id p0_benchmark --condition scaffold --overwrite",
+    "run-active": "tsx src/runActive.ts --tasks results/tasks_seed42.json --experiment-id p0_benchmark --condition active --overwrite",
+    "run-active-random": "tsx src/analyzeResults.ts --dir results --tasks results/tasks_seed42.json",
+    "analyze": "tsx src/analyzeResults.ts --dir results --tasks results/tasks_seed42.json",
+    "benchmark": "tsx src/runBenchmark.ts --n 100 --seed 42 --result-dir results",
+    "benchmark-no-llm": "tsx src/runBenchmark.ts --n 100 --seed 42 --result-dir results --skip-llm",
+    "p1:benchmark": "tsx src/p1/benchmark.ts --n 60 --seed 42 --skip-llm",
+    "p1:test": "tsx src/p1/test.ts",
+    "test": "tsx src/test.ts && tsx src/testApiSafety.ts && tsx src/testParseResponse.ts && tsx src/testRunnerMock.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "openai": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
