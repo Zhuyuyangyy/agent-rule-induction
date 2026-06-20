@@ -1,0 +1,6 @@
+node_modules/
+results/
+tmp_test/
+backups/
+*.js
+*.d.ts
