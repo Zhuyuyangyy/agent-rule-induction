@@ -455,7 +455,19 @@ export class ApiClientWrapper {
         } else {
           // Dynamic import to allow injection of mock clients in tests
           const { default: OpenAI } = await import('openai');
-          const client = new OpenAI({ apiKey: this.apiKey, baseURL: this.baseUrl });
+          // Support HTTP proxy via HTTPS_PROXY / HTTP_PROXY env vars
+          const proxyUrl = process.env.HTTPS_PROXY || process.env.https_proxy || process.env.HTTP_PROXY || process.env.http_proxy;
+          let clientOptions: any = { apiKey: this.apiKey, baseURL: this.baseUrl };
+          if (proxyUrl) {
+            try {
+              const { HttpsProxyAgent } = await import('https-proxy-agent');
+              const agent = new HttpsProxyAgent(proxyUrl);
+              clientOptions.fetch = (url: string, init: any) => fetch(url, { ...init, agent });
+            } catch {
+              // https-proxy-agent not available, proceed without proxy
+            }
+          }
+          const client = new OpenAI(clientOptions);
           const completion = await client.chat.completions.create({
             model: opts.model,
             messages: opts.messages as any,
