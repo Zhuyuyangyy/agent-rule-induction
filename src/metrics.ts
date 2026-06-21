@@ -10,13 +10,30 @@ export interface Metrics {
   failureTypeCounts: Record<string, number>;
 }
 
-export type FailureType = 'correct' | 'wrong_rule' | 'ambiguous_vs' | 'no_answer' | 'api_error';
+export type FailureType =
+  | 'correct'
+  | 'wrong_rule'
+  | 'version_space_mismatch'
+  | 'overconfident_guess'
+  | 'invalid_json'
+  | 'timeout'
+  | 'api_error';
+
+export const ALL_FAILURE_TYPES: readonly FailureType[] = [
+  'correct', 'wrong_rule', 'version_space_mismatch', 'overconfident_guess',
+  'invalid_json', 'timeout', 'api_error',
+];
 
 export function computeFailureType(r: RunResult): FailureType {
   if (r.finalVersionSpaceSize < 0) return 'api_error';
   if (r.correct) return 'correct';
-  if (!r.predictedRuleId) return 'no_answer';
-  if (r.finalVersionSpaceSize > 1) return 'ambiguous_vs';
+  // No prediction at all → timeout (ran out of turns)
+  if (!r.predictedRuleId) return 'timeout';
+  // VS > 1 and predicted something → overconfident guess
+  if (r.finalVersionSpaceSize > 1 && r.predictedRuleId) return 'overconfident_guess';
+  // VS > 1 and no prediction → version space mismatch
+  if (r.finalVersionSpaceSize > 1) return 'version_space_mismatch';
+  // VS = 1 but wrong → wrong_rule
   return 'wrong_rule';
 }
 

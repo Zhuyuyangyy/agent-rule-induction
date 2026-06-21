@@ -299,7 +299,7 @@ export function buildApiClient(opt: CliOptions, output: OutputManager): ApiClien
 
 if (process.argv[1] && process.argv[1].endsWith('runActive.ts')) {
   const opt = parseCommonArgs(process.argv.slice(2), {
-    condition: 'active',
+    condition: 'llm_active',
     maxTokens: 256,
     parserMode: 'strict',
   });

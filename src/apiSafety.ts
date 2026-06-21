@@ -11,7 +11,7 @@ import crypto from 'crypto';
 
 export interface ExperimentContext {
   experimentId: string;        // e.g. "p0.1_seed42"
-  condition: string;           // e.g. "active"
+  condition: string;           // e.g. "llm_active"
   model: string;               // e.g. "deepseek-chat"
   promptVersion: string;       // e.g. "v1"
   temperature: number;
@@ -453,20 +453,34 @@ export class ApiClientWrapper {
           content = res.content;
           usage = res.usage;
         } else {
-          // Dynamic import to allow injection of mock clients in tests
-          const { default: OpenAI } = await import('openai');
-          const client = new OpenAI({ apiKey: this.apiKey, baseURL: this.baseUrl });
-          const completion = await client.chat.completions.create({
-            model: opts.model,
-            messages: opts.messages as any,
-            temperature: opts.temperature,
-            max_tokens: opts.max_tokens,
+          // Use native fetch instead of OpenAI SDK (SDK has connection issues in some environments)
+          const baseUrl = this.baseUrl || 'https://api.openai.com/v1';
+          const url = baseUrl.endsWith('/') ? baseUrl + 'chat/completions' : baseUrl + '/chat/completions';
+          const resp = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${this.apiKey}`,
+            },
+            body: JSON.stringify({
+              model: opts.model,
+              messages: opts.messages,
+              temperature: opts.temperature,
+              max_tokens: opts.max_tokens,
+            }),
           });
-          content = completion.choices[0]?.message?.content || '';
-          usage = completion.usage ? {
-            prompt_tokens: completion.usage.prompt_tokens ?? null,
-            completion_tokens: completion.usage.completion_tokens ?? null,
-            total_tokens: completion.usage.total_tokens ?? null,
+          if (!resp.ok) {
+            const errBody = await resp.text().catch(() => '');
+            const err: any = new Error(`API error ${resp.status}: ${errBody}`);
+            err.status = resp.status;
+            throw err;
+          }
+          const data = await resp.json() as any;
+          content = data.choices?.[0]?.message?.content || '';
+          usage = data.usage ? {
+            prompt_tokens: data.usage.prompt_tokens ?? null,
+            completion_tokens: data.usage.completion_tokens ?? null,
+            total_tokens: data.usage.total_tokens ?? null,
           } : { prompt_tokens: null, completion_tokens: null, total_tokens: null };
         }
         this.ledger.update({

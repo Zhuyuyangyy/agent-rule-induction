@@ -38,7 +38,7 @@ function makeTaskFile(dir: string): string {
 function makeCtx(dir: string, overrides?: Partial<ExperimentContext>): ExperimentContext {
   return {
     experimentId: `exp_${Date.now()}_${Math.floor(Math.random() * 1000000)}`,
-    condition: 'active',
+    condition: 'llm_active',
     model: 'mock-model',
     promptVersion: 'v1',
     temperature: 0,
@@ -151,8 +151,8 @@ async function runTests() {
   await test('Result key differs across configs and tasks', () => {
     const dir = tmpDir('key');
     try {
-      const ctx1 = makeCtx(dir, { condition: 'active' });
-      const ctx2 = makeCtx(dir, { condition: 'passive' });
+      const ctx1 = makeCtx(dir, { condition: 'llm_active' });
+      const ctx2 = makeCtx(dir, { condition: 'llm_passive' });
       return computeResultKey(ctx1, 'task_0') !== computeResultKey(ctx2, 'task_0');
     } finally { clean(dir); }
   });

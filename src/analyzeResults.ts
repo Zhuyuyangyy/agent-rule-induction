@@ -47,7 +47,7 @@ export function runOracleBaseline(tasks: Task[]): RunResult[] {
     while (!env.isDone()) { const x = computeGreedyOptimalQuery(env); const qr = env.query(x); queryResults.push(qr); }
     const vs = env.versionSpace;
     const predictedRuleId = task.trueRuleId; // oracle always knows
-    return { taskId: task.taskId, trueRuleId: task.trueRuleId, predictedRuleId, correct: true, queriesMade: env.queriesMade, finalVersionSpaceSize: vs.length, initialVersionSpaceSize: task.versionSpaceRuleIds.length, conversation: [], queryResults, config: { model: 'oracle', maxQueries: 6, temperature: 0, seed: 0 } };
+    return { taskId: task.taskId, trueRuleId: task.trueRuleId, predictedRuleId, correct: true, queriesMade: env.queriesMade, finalVersionSpaceSize: vs.length, initialVersionSpaceSize: task.versionSpaceRuleIds.length, conversation: [], queryResults, config: { model: 'oracle_version_space', maxQueries: 6, temperature: 0, seed: 0 } };
   });
 }
 
@@ -248,21 +248,21 @@ export function analyze(resultDir: string, tasksPath: string): AnalysisReport {
   const greedyResults = runGreedyBaseline(tasks);
   const oracleResults = runOracleBaseline(tasks);
 
-  const randomDir = writeBaselineResults(randomResults, 'active_random', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'active_random'));
-  const greedyDir = writeBaselineResults(greedyResults, 'active_infogain', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'active_infogain'));
-  const oracleDir = writeBaselineResults(oracleResults, 'oracle', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'oracle'));
-  console.log(`  Wrote active_random -> ${randomDir}`);
-  console.log(`  Wrote active_infogain -> ${greedyDir}`);
-  console.log(`  Wrote oracle -> ${oracleDir}`);
+  const randomDir = writeBaselineResults(randomResults, 'algorithmic_random_query', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'algorithmic_random_query'));
+  const greedyDir = writeBaselineResults(greedyResults, 'algorithmic_infogain', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'algorithmic_infogain'));
+  const oracleDir = writeBaselineResults(oracleResults, 'oracle_version_space', tasksPath, 'p0_benchmark', path.join(resultDir, 'p0_benchmark', 'oracle_version_space'));
+  console.log(`  Wrote algorithmic_random_query -> ${randomDir}`);
+  console.log(`  Wrote algorithmic_infogain -> ${greedyDir}`);
+  console.log(`  Wrote oracle_version_space -> ${oracleDir}`);
 
   // Collect all conditions (algorithmic + LLM-based from resultDir)
   const conditions: { name: string; results: RunResult[] }[] = [
-    { name: 'active_random', results: randomResults },
-    { name: 'active_infogain', results: greedyResults },
-    { name: 'oracle', results: oracleResults },
+    { name: 'algorithmic_random_query', results: randomResults },
+    { name: 'algorithmic_infogain', results: greedyResults },
+    { name: 'oracle_version_space', results: oracleResults },
   ];
 
-  // Load LLM-based conditions from resultDir (passive, scaffold, active, etc.)
+  // Load LLM-based conditions from resultDir (llm_passive, llm_scaffold, llm_active, etc.)
   if (fs.existsSync(resultDir)) {
     for (const d of fs.readdirSync(resultDir, { withFileTypes: true }).filter(d => d.isDirectory())) {
       const jsonlPath = path.join(resultDir, d.name, 'results.jsonl');
@@ -296,18 +296,18 @@ export function analyze(resultDir: string, tasksPath: string): AnalysisReport {
   console.log('\nFailure Type Breakdown:');
   for (const m of allMetrics) {
     const ft = m.failureTypeCounts;
-    console.log(`  ${m.condition}: correct=${ft.correct || 0} wrong_rule=${ft.wrong_rule || 0} ambiguous_vs=${ft.ambiguous_vs || 0} no_answer=${ft.no_answer || 0} api_error=${ft.api_error || 0}`);
+    console.log(`  ${m.condition}: correct=${ft.correct || 0} wrong_rule=${ft.wrong_rule || 0} version_space_mismatch=${ft.version_space_mismatch || 0} overconfident_guess=${ft.overconfident_guess || 0} invalid_json=${ft.invalid_json || 0} timeout=${ft.timeout || 0} api_error=${ft.api_error || 0}`);
   }
 
-  // Significance tests: compare each condition vs active_random (baseline) on accuracy
+  // Significance tests: compare each condition vs algorithmic_random_query (baseline) on accuracy
   const significance: SignificanceResult[] = [];
   for (const c of conditions) {
-    if (c.name === 'active_random') continue;
-    const sig = pairedTTestBinary(randomResults, c.results, 'active_random', c.name, 'accuracy');
+    if (c.name === 'algorithmic_random_query') continue;
+    const sig = pairedTTestBinary(randomResults, c.results, 'algorithmic_random_query', c.name, 'accuracy');
     if (sig) significance.push(sig);
   }
-  // Also compare active_infogain vs oracle on query_count
-  const sigQuery = pairedTTestBinary(greedyResults, oracleResults, 'active_infogain', 'oracle', 'query_count');
+  // Also compare algorithmic_infogain vs oracle_version_space on query_count
+  const sigQuery = pairedTTestBinary(greedyResults, oracleResults, 'algorithmic_infogain', 'oracle_version_space', 'query_count');
   if (sigQuery) significance.push(sigQuery);
 
   console.log('\nSignificance Tests (paired t-test, two-tailed, normal approx):');

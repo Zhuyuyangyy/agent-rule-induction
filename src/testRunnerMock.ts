@@ -27,7 +27,7 @@ const factory: ApiClientFactory = {
 
 const ctx = {
   experimentId: 'exp_mock',
-  condition: 'active_minquery',
+  condition: 'llm_active_minquery',
   model: 'mock-model',
   promptVersion: 'v2_active_minquery',
   temperature: 0,

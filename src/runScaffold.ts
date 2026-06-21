@@ -105,7 +105,7 @@ export async function runScaffoldBatch(tasks: Task[], output: OutputManager, api
 
 if (process.argv[1] && process.argv[1].endsWith('runScaffold.ts')) {
   const opt = parseCommonArgs(process.argv.slice(2), {
-    condition: 'scaffold',
+    condition: 'llm_scaffold',
     maxTokens: 512,
     parserMode: 'strict',
   });

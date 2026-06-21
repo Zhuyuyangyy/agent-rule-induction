@@ -1,7 +1,7 @@
 // P0 Benchmark orchestration: generate tasks, run all baselines, analyze results.
 //
-// Algorithmic baselines (active_random, active_infogain, oracle) run without API.
-// LLM baselines (passive, scaffold, active) require OPENAI_API_KEY; they are
+// Algorithmic baselines (algorithmic_random_query, algorithmic_infogain, oracle_version_space) run without API.
+// LLM baselines (llm_passive, llm_scaffold, llm_active) require OPENAI_API_KEY; they are
 // invoked as child processes via tsx so this script stays a single entry point.
 //
 // Usage:
@@ -76,27 +76,27 @@ async function main() {
   console.log(`\nGenerated ${tasks.length} tasks -> ${tasksPath}`);
 
   // 2. Run algorithmic baselines + analysis (writes JSONL + manifest + report)
-  //    analyze() internally computes active_random, active_infogain, oracle,
+  //    analyze() internally computes algorithmic_random_query, algorithmic_infogain, oracle_version_space,
   //    writes their JSONL+manifest, and generates the full report.
-  console.log('\n--- Algorithmic baselines (active_random, active_infogain, oracle) ---');
+  console.log('\n--- Algorithmic baselines (algorithmic_random_query, algorithmic_infogain, oracle_version_space) ---');
   analyze(opt.resultDir, tasksPath);
 
-  // 3. Run LLM baselines (passive, scaffold, active) if API key available
+  // 3. Run LLM baselines (llm_passive, llm_scaffold, llm_active) if API key available
   const hasApiKey = !!opt.apiKey;
   if (opt.skipLlm || !hasApiKey) {
     console.log('\n--- LLM baselines skipped ---');
     if (!hasApiKey && !opt.skipLlm) {
-      console.log('  (Set OPENAI_API_KEY or pass --api-key to run passive/scaffold/active baselines.)');
+      console.log('  (Set OPENAI_API_KEY or pass --api-key to run llm_passive/llm_scaffold/llm_active baselines.)');
     }
     console.log('  To run them manually:');
-    console.log(`    npx tsx src/runPassive.ts --tasks ${tasksPath} --experiment-id ${opt.experimentId} --model ${opt.model}`);
-    console.log(`    npx tsx src/runScaffold.ts --tasks ${tasksPath} --experiment-id ${opt.experimentId} --model ${opt.model}`);
-    console.log(`    npx tsx src/runActive.ts   --tasks ${tasksPath} --experiment-id ${opt.experimentId} --model ${opt.model}`);
+    console.log(`    npx tsx src/runPassive.ts --tasks ${tasksPath} --experiment-id ${opt.experimentId} --model ${opt.model} --condition llm_passive`);
+    console.log(`    npx tsx src/runScaffold.ts --tasks ${tasksPath} --experiment-id ${opt.experimentId} --model ${opt.model} --condition llm_scaffold`);
+    console.log(`    npx tsx src/runActive.ts   --tasks ${tasksPath} --experiment-id ${opt.experimentId} --model ${opt.model} --condition llm_active`);
     console.log(`    npx tsx src/analyzeResults.ts --dir ${opt.resultDir} --tasks ${tasksPath}`);
     return;
   }
 
-  console.log('\n--- LLM baselines (passive, scaffold, active) ---');
+  console.log('\n--- LLM baselines (llm_passive, llm_scaffold, llm_active) ---');
   const commonArgs = [
     '--tasks', tasksPath,
     '--experiment-id', opt.experimentId,
@@ -108,9 +108,9 @@ async function main() {
   if (opt.apiKey) commonArgs.push('--api-key', opt.apiKey);
 
   const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-  runCli(npx, ['tsx', 'src/runPassive.ts', ...commonArgs], 'passive');
-  runCli(npx, ['tsx', 'src/runScaffold.ts', ...commonArgs], 'scaffold');
-  runCli(npx, ['tsx', 'src/runActive.ts', ...commonArgs], 'active');
+  runCli(npx, ['tsx', 'src/runPassive.ts', ...commonArgs, '--condition', 'llm_passive'], 'llm_passive');
+  runCli(npx, ['tsx', 'src/runScaffold.ts', ...commonArgs, '--condition', 'llm_scaffold'], 'llm_scaffold');
+  runCli(npx, ['tsx', 'src/runActive.ts', ...commonArgs, '--condition', 'llm_active'], 'llm_active');
 
   // 4. Re-run analysis to include LLM conditions
   console.log('\n--- Final analysis (all conditions) ---');

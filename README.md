@@ -46,10 +46,10 @@
 | 指标 | 目标 |
 | ---- | ---- |
 | 任务数 | ≥ 100 |
-| 条件(baseline) | passive / scaffold / active-random / active-infogain / oracle |
+| 条件(baseline) | algorithmic_random_query / algorithmic_infogain / oracle_version_space / llm_passive / llm_scaffold / llm_active |
 | 结果产物 | JSONL + manifest + report |
 | 评估指标 | accuracy、query_count、token、failure_type |
-| 统计 | 显著性检验 + 效应量 |
+| 统计 | 显著性检验 + 效应量 + bootstrap 95% CI |
 | README | 一键复现 |
 | 结果取向 | **允许负结果**(不论 active 是否显著优于 scaffold 都如实报告) |
 
@@ -117,19 +117,16 @@ npx tsx src/taskGenerator.ts --n 120 --seed 42 --output results/tasks.json
 
 ```bash
 # Passive:仅凭初始观测直接猜规则,不查询
-npx tsx src/runPassive.ts --experiment-id exp_p0 --tasks results/tasks.json --model deepseek-chat
+npx tsx src/runPassive.ts --experiment-id exp_p0 --tasks results/tasks.json --model deepseek-chat --condition llm_passive
 
 # Scaffold:结构化推理 + 查询
-npx tsx src/runScaffold.ts --experiment-id exp_p0 --tasks results/tasks.json --model deepseek-chat
+npx tsx src/runScaffold.ts --experiment-id exp_p0 --tasks results/tasks.json --model deepseek-chat --condition llm_scaffold
 
 # Active(LLM 自主选择查询):主实验条件
-npx tsx src/runActive.ts --experiment-id exp_p0 --tasks results/tasks.json --model deepseek-chat
-
-# Oracle:Oracle 选最优查询,模型给最终答案(版本空间上限)
-npx tsx src/runOracleQueryModelFinal.ts --experiment-id exp_p0 --tasks results/tasks.json --model deepseek-chat
+npx tsx src/runActive.ts --experiment-id exp_p0 --tasks results/tasks.json --model deepseek-chat --condition llm_active
 ```
 
-> `active-random`(随机查询)与 `active-infogain`(贪心最大信息增益查询)作为算法 baseline,由分析脚本在本地计算,无需额外 API 调用。
+> `algorithmic_random_query`(随机查询)与 `algorithmic_infogain`(贪心最大信息增益查询)和 `oracle_version_space`(理论上限)作为算法 baseline,由分析脚本在本地计算,无需额外 API 调用。
 
 ### 3. 分析结果
 
@@ -160,6 +157,26 @@ npx tsx src/runActive.ts --experiment-id exp_p0 --tasks results/tasks.json --ove
 npx tsx src/runActive.ts --experiment-id exp_p0 --tasks results/tasks.json --cache-mode replay
 ```
 
+### 5. 多 seed 实验(论文级加固)
+
+```bash
+# 仅算法基线(无需 API key,秒级完成)
+npm run multi-seed-no-llm
+
+# 含 LLM 基线(需要 API key,耗时较长)
+npx tsx src/runMultiSeed.ts --seeds 1,2,3,4,5 --n 100 --result-dir results/p0_multi_seed \
+  --base-url https://api.deepseek.com/v1 --api-key YOUR_KEY --model deepseek-chat
+
+# 生成失败案例分析
+npx tsx src/analyzeFailureCases.ts --result-dir results/p0_multi_seed
+```
+
+输出:
+- `results/p0_multi_seed/report.md` — 汇总报告(含 bootstrap 95% CI)
+- `results/p0_multi_seed/summary.csv` — 每 seed × condition 的指标
+- `results/p0_multi_seed/confidence_intervals.csv` — bootstrap CI
+- `results/p0_multi_seed/failure_analysis.md` — 失败案例分析
+
 ## 项目结构
 
 ```
@@ -180,6 +197,8 @@ src/
 ├── runOracleQueryModelFinal.ts  # Oracle 查询 + 模型最终答案(版本空间上限)
 ├── runModelQueryOracleFinal.ts  # 模型查询 + Oracle 最终答案
 ├── analyzeResults.ts         # 汇总分析:加载各条件 JSONL,计算 random/greedy baseline,输出 report
+├── runMultiSeed.ts           # 多 seed 实验:5 seeds × 100 tasks,bootstrap CI,汇总报告
+├── analyzeFailureCases.ts    # 失败案例分析:按类型分类,生成 docs/failure_analysis.md
 ├── test.ts                   # 单元测试(规则/环境/任务生成)
 ├── testApiSafety.ts          # API 安全层离线测试
 ├── testRunnerMock.ts         # 端到端 runner 测试(mock API)

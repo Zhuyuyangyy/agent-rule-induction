@@ -110,7 +110,7 @@ function buildContextFromCli(opt: CliOptions): ExperimentContext {
 
 if (process.argv[1] && process.argv[1].endsWith('runPassive.ts')) {
   const opt = parseCommonArgs(process.argv.slice(2), {
-    condition: 'passive',
+    condition: 'llm_passive',
     maxTokens: 64,
     maxQueries: 0,
     parserMode: 'strict',
