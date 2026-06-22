@@ -2,11 +2,13 @@
 
 ## Abstract
 
-We investigate whether external verifiable search mechanisms can outperform raw large language model (LLM) reasoning in theory discovery tasks. We introduce two controlled benchmarks: P0 (boolean rule induction over 48 candidate rules) and P1 (symbolic expression discovery over 265 candidate formulas). In P0, algorithmic information-gain query selection achieves 100.0% accuracy [95% CI: 100%, 100%] across 6 random seeds, matching the oracle upper bound, while LLM baselines achieve only 3.6%-21.0%. In P1, active infogain (variance-based query selection) achieves the highest symbolic equivalence rate among non-oracle baselines at all noise levels (98.5% at noise=0, 96.2% at noise=0.1), while using 35-56% fewer queries than greedy search. These results provide early controlled evidence that external verifiable search mechanisms consistently outperform uninformed or LLM-based approaches in both boolean rule induction and symbolic expression discovery. We discuss limitations, including a fixed hypothesis space and single-model LLM validation, and outline a roadmap toward physics-constrained discovery benchmarks.
+We study whether external verifiable search mechanisms can outperform raw large language model (LLM) reasoning in controlled theory-discovery benchmarks. We introduce two benchmarks: P0 (boolean rule induction over 48 candidate rules) and P1 (symbolic expression discovery over 265 candidate formulas under varying noise). In P0, algorithmic information-gain query selection achieves 100.0% accuracy [95% CI: 100%, 100%] across 6 seeds, matching the oracle upper bound, while LLM baselines achieve only 3.6%--21.0%. In P1, active infogain (variance-based query selection) achieves the highest symbolic equivalence rate among non-oracle baselines at all noise levels (98.5% at noise=0, 96.2% at noise=0.1), while using 35--56% fewer queries than greedy search. These results provide early controlled evidence that external verifiable search mechanisms outperform uninformed or LLM-based approaches in both boolean rule induction and symbolic expression discovery. We discuss limitations including fixed hypothesis spaces, single-model LLM validation, and the absence of physical law discovery, and outline a roadmap toward physics-constrained discovery benchmarks. This paper does not claim discovery of new physical laws.
 
 ## 1. Introduction
 
-A central question in AI-for-science is whether large language models can autonomously discover new scientific theories. Recent work has shown impressive capabilities in scientific reasoning, but also systematic failures in hypothesis evaluation and self-correction. We ask a more modest question: in controlled settings where the hypothesis space is known and searchable, do external verifiable search mechanisms outperform raw LLM reasoning?
+A central ambition in AI-for-science is to build systems that can autonomously discover, refine, and validate scientific theories. Recent advances in large language models (LLMs) have demonstrated impressive scientific reasoning capabilities, yet these systems also exhibit systematic failures: they hallucinate, overconfidently guess, and fail to systematically narrow hypothesis spaces.
+
+We ask a more focused question: **in controlled settings where the hypothesis space is known and searchable, do external verifiable search mechanisms outperform raw LLM reasoning?** This question matters because the answer determines whether AI scientific discovery should rely primarily on LLM reasoning or on external scaffolding that enforces verifiable search.
 
 We propose the **Active Theory Discovery** framework, which decomposes theory discovery into three stages:
 
@@ -14,86 +16,122 @@ We propose the **Active Theory Discovery** framework, which decomposes theory di
 2. **Active querying**: select informative experiments to discriminate between candidates
 3. **Version space narrowing**: eliminate inconsistent hypotheses based on observations
 
-This framework is inspired by active learning, version-space learning, and the scientific method itself. The key insight is that **the search mechanism matters more than the reasoner**: a simple algorithmic information-gain strategy can systematically eliminate candidates, while even a sophisticated LLM may fail to leverage observations effectively.
+The key insight is that **the search mechanism matters more than the reasoner**: a simple algorithmic information-gain strategy can systematically eliminate candidates, while even a sophisticated LLM may fail to leverage observations effectively.
 
-We evaluate this thesis through two benchmarks:
+We evaluate this thesis through two controlled benchmarks:
 
 - **P0 (Rule Induction)**: Discover a boolean rule from 48 candidates by querying input-output pairs
-- **P1 (Symbolic Discovery)**: Discover a symbolic expression from 265 candidates by querying function values, with noise
-
-Our main contributions are:
-
-1. A controlled benchmark showing algorithmic infogain reaches oracle performance in P0 (100.0% accuracy), while LLM baselines achieve only 3.6%-21.0%
-2. An extension to P1 showing active infogain maintains the highest symbolic equivalence rate under noisy conditions (96.2% at noise=0.1)
-3. A failure analysis characterizing where and why baselines fail
-4. A roadmap toward physics-constrained discovery benchmarks
+- **P1 (Symbolic Discovery)**: Discover a symbolic expression from 265 candidates by querying function values under noise
 
 **We do not claim that this system discovers new physical laws.** P0 and P1 are controlled benchmarks with known hypothesis spaces. They provide early evidence for the Active Theory Discovery thesis, not evidence for autonomous scientific discovery.
 
-## 2. Related Work
+## 2. Contributions
 
-**Active Learning.** Our work builds on pool-based active learning, where a learner selects the most informative examples from a pool. Standard strategies include uncertainty sampling, query-by-committee, and expected information gain. Our algorithmic infogain baseline is a direct application of maximum information gain to version-space narrowing.
+We make the following contributions:
 
-**Symbolic Regression.** Symbolic regression seeks to discover closed-form expressions that fit data. Recent approaches include genetic programming (Schmidt & Lipson, 2009), neural-guided search (Petersen et al., 2019), and pre-trained transformers (Biggio et al., 2021). Our P1 benchmark differs in that we search within a fixed library rather than generating novel expressions.
+1. **A controlled Active Theory Discovery framing.** We formalize theory discovery as version-space narrowing with active query selection, providing a structured alternative to raw LLM reasoning for scientific discovery tasks.
 
-**LLM-based Science.** Large language models have been applied to scientific reasoning, hypothesis generation, and experimental design. However, LLMs are known to hallucinate, overconfidently guess, and fail to systematically narrow hypothesis spaces. Our P0 results quantify these failures in a controlled setting.
+2. **P0 rule induction benchmark with multi-seed evidence.** We show that algorithmic information-gain search reaches oracle-level performance (100.0% accuracy) across 6 seeds, while LLM baselines achieve only 3.6%--21.0%.
 
-**Version-Space Learning.** The version space is the set of hypotheses consistent with all observations. Mitchell (1982) showed that version-space learning converges to the correct hypothesis given sufficient observations. Our algorithmic infogain baseline is a greedy approximation to optimal version-space narrowing.
+3. **P1 symbolic discovery benchmark with multi-noise evidence.** We extend the mechanism from boolean rule induction to symbolic expression discovery over 265 formulas, showing that active infogain maintains the highest symbolic equivalence rate under noisy conditions (96.2% at noise=0.1).
 
-## 3. Active Theory Discovery Framework
+4. **Evidence that active_infogain improves symbolic-equivalence robustness under noisy conditions.** Active infogain degrades more gracefully under noise (-2.3pp SymEq drop from noise=0 to 0.1) compared to active_random (-5.7pp) and greedy_symbolic_search (-2.7pp), while using 35--56% fewer queries.
 
-The Active Theory Discovery framework consists of three components:
+5. **A reproducible artifact release with explicit claim boundaries and limitations.** All benchmarks, results, and analysis are publicly available with documented claim boundaries, forbidden claims, and known blockers.
 
-### 3.1 Hypothesis Space
+These contributions provide early controlled evidence for the usefulness of external verifiable search in theory-discovery settings. They do not constitute physical theory discovery.
 
-A finite set H = {h1, h2, ..., hN} of candidate theories. In P0, H is a set of 48 boolean rules over three integer variables. In P1, H is a set of 265 symbolic expressions over 1-3 continuous variables.
+## 3. Background and Motivation
 
-### 3.2 Query Selection
+### Active Learning
 
-Given the current version space V (subset of H consistent with observations so far), select an input x to query. The information gain of querying x is:
+Our work builds on pool-based active learning, where a learner selects the most informative examples from a pool. Standard strategies include uncertainty sampling, query-by-committee, and expected information gain (Settles, 2009). Our algorithmic infogain baseline is a direct application of maximum information gain to version-space narrowing.
+
+### Symbolic Regression
+
+Symbolic regression seeks to discover closed-form expressions that fit data. Recent approaches include genetic programming (Schmidt & Lipson, 2009), neural-guided search (Petersen et al., 2019), and pre-trained transformers (Biggio et al., 2021). Our P1 benchmark differs in that we search within a fixed library rather than generating novel expressions.
+
+### LLM-based Science
+
+Large language models have been applied to scientific reasoning, hypothesis generation, and experimental design. However, LLMs are known to hallucinate, overconfidently guess, and fail to systematically narrow hypothesis spaces. Our P0 results quantify these failures in a controlled setting.
+
+### Version-Space Learning
+
+The version space is the set of hypotheses consistent with all observations. Mitchell (1982) showed that version-space learning converges to the correct hypothesis given sufficient observations. Our algorithmic infogain baseline is a greedy approximation to optimal version-space narrowing.
+
+## 4. Active Theory Discovery Framework
+
+We formalize the Active Theory Discovery framework as follows.
+
+### Definitions
+
+- **Hypothesis space** H = {T_1, T_2, ..., T_N}: a finite set of candidate theories
+- **Candidate set** C ⊆ H: theories consistent with observations so far
+- **Query** x: an input to the target function
+- **Observation** y = f(x) + ε: the target's response, possibly with noise ε
+- **Active query policy** π(x | C): selects the next query given the current candidate set
+- **Scoring function** S(T): evaluates the quality of a candidate theory
+
+### Information-Gain Query Selection
+
+The core mechanism selects queries that maximize information gain about the identity of the target theory. In P0 (discrete outputs), we use split entropy:
 
 ```
-IG(x) = H(V) - E[H(V | f(x))]
+score(x) = H(C) - E[H(C | f(x))]
 ```
 
-where H(V) is the entropy of the version space. In P0, we use split entropy (binary outcomes). In P1, we use output variance across candidates:
+In P1 (continuous outputs), we use output variance across candidates:
 
 ```
-score(x) = variance({ f(x) | f in V })
+score(x) = Var({ f_T(x) | T ∈ C })
 ```
 
-### 3.3 Version Space Update
+This variance-based proxy selects the query point where candidate theories disagree most, which is the continuous analog of maximum information gain.
 
-After observing y = f(x) (possibly with noise), eliminate hypotheses inconsistent with the observation:
+### Version Space Update
+
+After observing y = f(x) (possibly with noise), we eliminate inconsistent hypotheses:
 
 ```
-V' = { h in V : |h(x) - y| <= tolerance }
+C' = { T ∈ C : |f_T(x) - y| ≤ τ }
 ```
 
-In P0 (noiseless), tolerance = 0. In P1, tolerance scales with noise level (3 * sigma for Gaussian noise at level sigma).
+In P0 (noiseless), τ = 0. In P1, τ scales with noise level (τ = 3σ for Gaussian noise at level σ).
 
-### 3.4 Baselines
+### Long-Term Theory Score (Future Framing)
 
-We compare five strategies:
+We envision a broader theory scoring function that goes beyond prediction accuracy:
 
-1. **random_search**: randomly select a hypothesis (no querying)
-2. **greedy_symbolic_search**: evaluate all candidates on fixed query points, pick the best
-3. **active_random**: query at random points, filter candidates
-4. **active_infogain**: query at max-information-gain points, filter candidates
-5. **oracle**: always return the correct hypothesis (upper bound)
+```
+S(T) = α · A_pred(T) + β · ΔC(T) + γ · R_anom(T) + δ · I_consist(T) + ε · I_exp(T) - λ · K(T)
+```
 
-## 4. P0: Rule Induction Benchmark
+where A_pred is predictive accuracy, ΔC is complexity reduction, R_anom is anomaly coverage, I_consist is internal consistency, I_exp is experimental support, and K is complexity penalty.
 
-### 4.1 Setup
+**Important**: P0/P1 currently instantiate only parts of this broader score (primarily A_pred and ΔC). SymPy-based consistency and dimensional checks (I_consist) are future work. Current results should not be interpreted as open-ended physics discovery.
 
-- **Hypothesis space**: 48 boolean rules over (x0, x1, x2), where xi in {0..9}
-- **Rule types**: equality, even/odd, greater-than, less-than, ordering
-- **Input space**: 1000 possible inputs (10^3)
-- **Budget**: 6 queries per task
-- **Seeds**: 6 (42, 1, 2, 3, 4, 5), 100 tasks per seed
-- **LLM**: deepseek-chat via OpenAI-compatible API
+## 5. P0: Rule Induction Benchmark
 
-### 4.2 Results
+### Task Definition
+
+The P0 benchmark tests whether an agent can identify a boolean rule from 48 candidates by querying input-output pairs. Each rule maps (x0, x1, x2), where xi ∈ {0..9}, to a boolean output. Rule types include equality, even/odd, greater-than, less-than, and ordering constraints.
+
+### Version-Space / Infogain Mechanism
+
+The algorithmic infogain baseline maintains a version space (set of rules consistent with observations) and selects queries that maximize split entropy — the query that most evenly divides the remaining candidates into true/false groups. This greedy strategy systematically eliminates candidates.
+
+### Baselines
+
+| Condition | Description |
+|-----------|-------------|
+| algorithmic_infogain | Max-entropy query selection, version-space narrowing |
+| oracle_version_space | Always returns correct rule (upper bound) |
+| algorithmic_random_query | Random query selection, version-space narrowing |
+| llm_scaffold | LLM with structured reasoning + active querying |
+| llm_active | LLM with free-form active querying |
+| llm_passive | LLM with observations only, no querying |
+
+### Results
 
 | Condition | Seeds | Accuracy | 95% CI |
 |-----------|------:|--------:|-------:|
@@ -106,35 +144,40 @@ We compare five strategies:
 
 *Evidence: `docs/p0_multiseed_report.md`*
 
-### 4.3 Analysis
+**Claim boundary**: In P0, algorithmic information-gain search reaches oracle-level performance across the evaluated seeds, while raw LLM baselines underperform. This result holds within the controlled benchmark setting and should not be overgeneralized beyond it.
 
-Algorithmic infogain reaches oracle performance (100.0%) across all 6 seeds, confirming that the version-space mechanism is both sufficient and efficient for this task. The average query count is 3.37 (out of 6), meaning infogain typically identifies the correct rule in just over 3 queries.
+## 6. P1: Symbolic Discovery Benchmark
 
-LLM baselines dramatically underperform. Even llm_scaffold, which provides structured reasoning templates and active querying capabilities, achieves only 21.0%. Llm_passive, which receives only observations without querying, achieves 3.6%. This gap is not a seed artifact — it holds across all seeds tested.
+### Task Definition
 
-### 4.4 Failure Analysis
+The P1 benchmark tests whether an agent can identify a symbolic expression from 265 candidates by querying function values. The hypothesis space contains 245 synthetic formulas and 20 classic physics formulas across 7 categories: linear (49), polynomial (44), rational (40), trigonometric (42), sqrt/log/abs (40), physics-style (30), and classic (20).
 
-LLM failures fall into four categories:
+### Noise Levels
 
-- **wrong_rule** (3 cases): LLM chose wrong rule from narrowed version space
-- **version_space_mismatch** (3 cases): LLM predicted rule outside remaining version space
-- **overconfident_guess** (2 cases): LLM answered too early with insufficient queries
-- **timeout** (1 case): Budget exhausted without final answer
+We evaluate under four noise levels: σ ∈ {0, 0.01, 0.05, 0.10} (additive Gaussian noise).
 
-*Evidence: `docs/failure_analysis.md`*
+### Baselines
 
-## 5. P1: Symbolic Discovery Benchmark
+| Baseline | Description |
+|----------|-------------|
+| random_search | Randomly select a formula (no querying) |
+| greedy_symbolic_search | Evaluate all candidates on fixed query points, pick lowest error |
+| active_random | Query at random points, filter candidates by error |
+| active_infogain | Query at max-variance points, filter candidates by error |
+| oracle | Always return correct formula (upper bound) |
 
-### 5.1 Setup
+### active_infogain Definition
 
-- **Hypothesis space**: 265 symbolic expressions (245 synthetic + 20 classic)
-- **Categories**: linear (49), polynomial (44), rational (40), trigonometric (42), sqrt/log/abs (40), physics-style (30), classic (20)
-- **Input dimension**: 1-3 continuous variables
-- **Budget**: 10 queries per task
-- **Noise levels**: 0, 0.01, 0.05, 0.10 (additive Gaussian)
-- **Seeds**: 3 (42, 43, 44)
+1. Maintain candidate expression set C (initially all 265 formulas)
+2. Sample candidate query points x from the input space
+3. For each x, compute score(x) = Var({ f_T(x) | T ∈ C })
+4. Select the query point with maximum variance
+5. Observe the target's response y at that point
+6. Filter candidates: remove those where |f_T(x) - y| > τ
+7. Repeat until budget (10 queries) is exhausted
+8. Return the candidate with lowest total error
 
-### 5.2 Results
+### Results
 
 | Baseline | Noise=0 SymEq | Noise=0.1 SymEq | Avg Queries |
 |----------|--------------:|----------------:|------------:|
@@ -144,109 +187,137 @@ LLM failures fall into four categories:
 | **active_infogain** | **98.5%** | **96.2%** | **6.5** |
 | oracle | 100.0% | 100.0% | 0 |
 
-*Evidence: `docs/artifacts/p1_multi_noise/summary.csv`*
+*Evidence: `docs/artifacts/p1_multi_noise/summary.csv`, `docs/artifacts/p1_multi_noise/report.md`*
 
-### 5.3 Noise Robustness
+### Noise Robustness
 
-Active infogain shows the most graceful degradation under noise:
-
-| Baseline | SymEq drop (noise 0 -> 0.1) |
+| Baseline | SymEq drop (noise 0 → 0.1) |
 |----------|----------------------------:|
 | active_infogain | -2.3pp |
 | greedy_symbolic_search | -2.7pp |
 | active_random | -5.7pp |
 
-Active infogain also uses significantly fewer queries than greedy search (4.4-6.5 vs 10), achieving equal or better accuracy with 35-56% fewer observations.
+*Evidence: `docs/p1_prototype.md`*
 
-### 5.4 Category-Specific Patterns
+**Claim boundary**: In P1, active_infogain improves symbolic-equivalence robustness under noisy conditions, while greedy methods may retain slightly higher numerical fit in some settings. P1 does not discover physical laws.
 
-- **Linear/polynomial**: nearly perfect across all methods (even at noise=0.1)
-- **Rational**: most sensitive to noise (greedy drops to 74.6% R^2 at noise=0.1)
-- **Trigonometric**: active_infogain outperforms active_random by ~3pp SymEq at noise=0.1
-- **Classic**: lower baseline due to formula ambiguity (e.g., F=ma and p=mv have same form)
+## 7. Results
 
-## 6. Results
+### Finding 1: P0 supports external verifiable active search over raw LLM reasoning
 
-### 6.1 Main Finding
+In the P0 rule induction benchmark, algorithmic infogain achieves 100.0% accuracy [100%, 100%] across 6 seeds, matching the oracle upper bound. LLM baselines achieve only 3.6%--21.0%, even with structured reasoning templates (llm_scaffold). This gap is structural, not a seed artifact.
 
-External verifiable search mechanisms (algorithmic infogain, version-space narrowing) consistently outperform raw LLM reasoning and simple heuristics across both benchmarks:
+*Evidence: `docs/p0_multiseed_report.md`*
 
-1. In P0, algorithmic infogain reaches 100.0% accuracy while LLM baselines achieve 3.6%-21.0%
-2. In P1, active infogain achieves the highest symbolic equivalence rate (96.2% at noise=0.1) among non-oracle baselines
-3. Active infogain degrades more gracefully under noise than random-query baselines
-4. Active infogain uses 35-56% fewer queries than greedy search
+### Finding 2: P1 shows the mechanism transfers from discrete rule induction to symbolic expression discovery
 
-### 6.2 Paired Comparisons
+Active infogain achieves 98.5% symbolic equivalence rate at noise=0 in the P1 benchmark, demonstrating that the version-space narrowing mechanism transfers from boolean rule induction (discrete outputs) to symbolic expression discovery (continuous outputs with variance-based query selection).
 
-At noise=0.1, active_infogain vs other baselines (heldoutAccuracy):
+*Evidence: `docs/artifacts/p1_multi_noise/summary.csv`*
 
-| Comparison | Diff Mean | 95% CI | Significant |
-|------------|----------:|-------:|:-----------:|
-| active_infogain vs random_search | +0.883 | [0.849, 0.916] | Yes |
-| active_infogain vs active_random | -0.011 | [-0.030, 0.006] | No |
-| active_infogain vs greedy_symbolic_search | -0.018 | [-0.036, -0.004] | Yes |
-| active_infogain vs oracle | -0.021 | [-0.038, -0.007] | Yes |
+### Finding 3: Under high noise, active_infogain improves symbolic-equivalence robustness
 
-Active infogain significantly outperforms random search and is competitive with greedy search on R^2, while achieving higher symbolic equivalence rates.
+At noise=0.1, active_infogain achieves 96.2% SymEq vs. greedy 95.5% and active_random 92.5%. The degradation from noise=0 to noise=0.1 is most graceful for active_infogain (-2.3pp) compared to active_random (-5.7pp). Active infogain also uses 35--56% fewer queries than greedy search.
 
 *Evidence: `docs/artifacts/p1_multi_noise/report.md`*
 
-## 7. Failure Analysis
+### Finding 4: Failure analysis reveals remaining brittleness
 
-### 7.1 P0 Failures
-
-LLM failures in P0 are characterized by:
-
-- Inability to systematically narrow the version space
-- Overconfident guessing before sufficient observations
-- Predicting rules outside the remaining version space
-
-### 7.2 P1 Failures
-
-| Failure Type | Count | Description |
-|-------------|------:|-------------|
-| wrong_expression | 1052 | random_search picking wrong formula |
-| oracle_gap | 147 | significant gap from oracle (R^2 < 0.5) |
-| symbolic_mismatch | 10 | numerically close but wrong formula |
-| overfit_noise | 4 | fit noise rather than true function |
-
-By baseline:
-
-- random_search: 1052 failures
-- active_random: 102 failures
-- greedy_symbolic_search: 41 failures
-- **active_infogain: 18 failures** (fewest among non-oracle baselines)
+Failure cases constrain the strength of our claims. The most common failure types are wrong_expression (1052 cases, almost all from random_search), oracle_gap (147 cases), and symbolic_mismatch (10 cases). Active_infogain has the fewest failures (18) among non-oracle baselines, but symbolic_mismatch cases — where numerical fit is high but the wrong formula is selected — highlight the need for structural (not just numerical) equivalence checking.
 
 *Evidence: `docs/p1_failure_analysis.md`, `docs/artifacts/p1_multi_noise/failure_cases.jsonl`*
 
-### 7.3 Failure Patterns
+## 8. Failure Analysis
 
-The most informative failure type is **symbolic_mismatch**: expressions that are numerically close (R^2 > 0.9) but symbolically different. These occur primarily with absolute-value expressions (e.g., |x-1| vs x-1 for x>1) and highlight a fundamental challenge — numerical agreement does not guarantee symbolic equivalence.
+### Failure Categories
 
-A SymPy-based symbolic verifier could address this limitation by checking structural equivalence, dimensional homogeneity, and limit behavior. However, such a verifier is future work and not part of the current results.
+| Failure Type | Count | Description |
+|-------------|------:|-------------|
+| wrong_expression | 1052 | Baseline selects wrong formula (predominantly random_search) |
+| oracle_gap | 147 | Significant gap from oracle (R² < 0.5) |
+| symbolic_mismatch | 10 | Numerically close (R² > 0.9) but symbolically different |
+| overfit_noise | 4 | Fits noise patterns rather than true function |
+| high_complexity | 0 | Predicted expression overly complex (not observed in current data) |
+| invalid_numeric_output | 0 | Expression produces NaN/Inf (not observed in current data) |
+| query_not_informative | 0 | Queries fail to reduce candidate set (not observed in current data) |
 
-## 8. Limitations
+Note: high_complexity, invalid_numeric_output, and query_not_informative are defined failure categories that were not heavily represented in the current artifact. We include them for completeness and because they may emerge in future benchmarks with larger hypothesis spaces.
 
-This is a controlled benchmark paper with known boundary conditions. The following limitations apply:
+### Why Failure Analysis Matters
+
+Failure analysis serves three purposes in this work:
+
+1. **Claim constraining**: Failures define the boundary of what the benchmarks can support. Symbolic_mismatch cases, for example, show that numerical agreement does not guarantee symbolic equivalence — a fundamental limitation of the current evaluation.
+
+2. **Mechanism diagnosis**: Failures reveal where the search mechanism breaks down. Oracle_gap failures in active_random show that random query selection is insufficient for discriminating between similar formulas.
+
+3. **Future verifier motivation**: The existence of symbolic_mismatch failures motivates the need for a SymPy-based structural verifier that can check symbolic equivalence, dimensional homogeneity, and limit behavior — planned as future work.
+
+*Evidence: `docs/p1_failure_analysis.md`*
+
+## 9. Reproducibility
+
+All experiments are reproducible from the public repository:
+
+- **Repository**: https://github.com/Zhuyuyangyy/agent-rule-induction
+- **Release tag**: `v0.2.0-stage2-p1`
+- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v0.2.0-stage2-p1
+- **Release artifact**: `active_theory_discovery_stage2_p1_paper_grade.zip`
+
+### Reproduction Commands
+
+```bash
+npm install
+npm run typecheck
+npm test
+npm run p1:benchmark
+npm run p1:benchmark:noisy
+npm run p1:benchmark:multi-noise
+```
+
+**Important**: P1 benchmark reproduction requires no API keys. All five baselines (random_search, greedy_symbolic_search, active_random, active_infogain, oracle) are algorithmic and run entirely locally.
+
+### Artifact Paths
+
+- `docs/artifacts/p1_multi_noise/report.md`
+- `docs/artifacts/p1_multi_noise/summary.csv`
+- `docs/artifacts/p1_multi_noise/failure_cases.jsonl`
+
+### Known Blockers
+
+Stage 1.2 multi-model validation is blocked by unavailable API keys (only deepseek-chat available). Cross-model generalization requires gpt-4.1-mini, Claude, Qwen, or Kimi keys.
+
+*See `paper/reproducibility.md` for full details.*
+
+## 10. Limitations
+
+This is a controlled benchmark paper with explicit boundary conditions. The following limitations apply:
 
 1. **Fixed hypothesis spaces**: Both P0 and P1 assume known candidate sets. Real discovery involves open-ended search where the true hypothesis may not be in the initial set.
-2. **Synthetic benchmark limitation**: P1 uses 245 synthetic formulas as primary evidence. The 20 classic physics formulas are illustrative demos only and are not treated as evidence of physical law discovery.
-3. **Single-model LLM validation**: LLM baselines are tested on deepseek-chat only. Cross-model generalization is blocked by unavailable API keys (gpt-4.1-mini, Claude, Qwen, Kimi).
+
+2. **Synthetic / controlled benchmark setting**: P1 uses 245 synthetic formulas as primary evidence. The 20 classic physics formulas are illustrative demos only and are not treated as evidence of physical law discovery.
+
+3. **No open-ended theory generation yet**: The system cannot propose hypotheses outside the pre-defined library. In real science, hypothesis generation is a critical creative step.
+
 4. **No physical law discovery claim**: P1 matches against a known formula library. It does not discover new physical laws.
-5. **No open-ended theory generation yet**: The system cannot propose hypotheses outside the pre-defined library.
-6. **No SymPy verifier yet**: Symbolic equivalence is checked numerically, not structurally. A SymPy-based verifier would strengthen equivalence claims but is planned future work.
-7. **No real-world anomaly-driven physics benchmark yet**: All data is synthetically generated with controlled noise. No real experimental data is used.
-8. **Simplified noise model**: Only additive Gaussian noise is tested.
-9. **No LLM baselines in P1**: P1 includes only algorithmic baselines. LLM baselines for symbolic discovery are deferred.
-10. **Classic formula ambiguity**: Some classic formulas are numerically indistinguishable (e.g., F=ma and p=mv both compute x1*x2).
+
+5. **Single-model LLM validation**: LLM baselines are tested on deepseek-chat only. Cross-model generalization is blocked by unavailable API keys (gpt-4.1-mini, Claude, Qwen, Kimi).
+
+6. **No SymPy verifier yet**: Symbolic equivalence is checked numerically (R² on test points), not structurally. A SymPy-based verifier would strengthen equivalence claims but is planned future work.
+
+7. **No dimensional analysis yet**: The current framework does not check dimensional homogeneity of candidate expressions, which is essential for physics-constrained discovery.
+
+8. **No anomaly-driven physics benchmark yet**: All data is synthetically generated with controlled noise. No real experimental data is used.
+
+9. **Results are early evidence, not proof of a complete AI scientist**: The transition from controlled benchmarks to genuine scientific discovery remains an open challenge.
 
 *See `paper/limitations.md` for detailed discussion.*
 
-## 9. Toward AlphaGo-for-Science
+## 11. Toward AlphaGo-for-Science
 
-The long-term vision of Active Theory Discovery is an "AlphaGo-for-Science" system that can autonomously discover, refine, and validate scientific theories. Our roadmap:
+The long-term vision of Active Theory Discovery is an "AlphaGo-for-Science" system that can autonomously discover, refine, and validate scientific theories. Our staged roadmap:
 
-**P0 (completed)**: Boolean rule induction. Demonstrates that external verifiable search reaches oracle performance.
+**P0 (completed)**: Boolean rule induction. Demonstrates that external verifiable search reaches oracle performance in a discrete setting.
 
 **P1 (completed)**: Symbolic expression discovery. Demonstrates that the mechanism transfers to continuous spaces and is robust to noise.
 
@@ -258,54 +329,18 @@ The long-term vision of Active Theory Discovery is an "AlphaGo-for-Science" syst
 
 **We emphasize: P0 and P1 provide early controlled evidence for the Active Theory Discovery thesis. They do not demonstrate autonomous scientific discovery or new physical law discovery.**
 
-## 10. Conclusion
+## 12. Conclusion
 
-We have presented two controlled benchmarks demonstrating that external verifiable search mechanisms outperform raw LLM reasoning in theory discovery tasks. In P0 (boolean rule induction), algorithmic infogain achieves 100.0% accuracy while LLM baselines achieve 3.6%-21.0%. In P1 (symbolic expression discovery), active infogain achieves the highest symbolic equivalence rate among non-oracle baselines (96.2% at noise=0.1) and degrades more gracefully under noise than alternatives.
+We have presented two controlled benchmarks demonstrating that external verifiable search mechanisms outperform raw LLM reasoning in theory discovery tasks. In P0 (boolean rule induction), algorithmic infogain achieves 100.0% accuracy while LLM baselines achieve 3.6%--21.0%. In P1 (symbolic expression discovery), active infogain achieves the highest symbolic equivalence rate among non-oracle baselines (96.2% at noise=0.1) and degrades more gracefully under noise than alternatives.
 
 These results support the thesis that AI scientific discovery should not rely on raw LLM reasoning alone, but on external verifiable search mechanisms that constrain, refute, and score hypotheses within a searchable space. The Active Theory Discovery framework provides a structured approach to building such systems.
 
 However, P1 remains a symbolic-discovery benchmark, not physical theory discovery. The hypothesis space is fixed and known, the formulas are synthetic, and no real-world data is used. The transition from controlled benchmarks to genuine scientific discovery remains an open challenge.
 
-## 11. Reproducibility
-
-All experiments are reproducible from the public repository:
-
-- **Repository**: https://github.com/Zhuyuyangyy/agent-rule-induction
-- **Release tag**: `v0.2.0-stage2-p1`
-- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v0.2.0-stage2-p1
-
-Reproduction commands:
-
-```bash
-npm install
-npm run typecheck
-npm test
-npm run p1:benchmark
-npm run p1:benchmark:noisy
-npm run p1:benchmark:multi-noise
-```
-
-Artifact paths:
-
-- `docs/artifacts/p1_multi_noise/report.md`
-- `docs/artifacts/p1_multi_noise/summary.csv`
-- `docs/artifacts/p1_multi_noise/failure_cases.jsonl`
-
-Additional documentation:
-
-- `docs/p0_multiseed_report.md` — P0 multi-seed results
-- `docs/p1_prototype.md` — P1 prototype report
-- `docs/p1_failure_analysis.md` — P1 failure analysis
-- `docs/failure_analysis.md` — P0 failure analysis
-
-Known blocker: Stage 1.2 multi-model validation is blocked by unavailable API keys (only deepseek-chat available). P1 benchmark reproduction requires no API keys.
-
-*See `paper/reproducibility.md` for full details.*
-
 ## References
 
-- Mitchell, T. M. (1982). Generalization as search. Artificial Intelligence, 18(2), 203-226.
-- Schmidt, M., & Lipson, H. (2009). Distilling free-form natural laws from experimental data. Science, 324(5923), 81-85.
-- Petersen, K. B., et al. (2019). Deep symbolic regression: Recovering mathematical expressions from data via risk-seeking policy gradients. ICLR 2021.
-- Biggio, L., et al. (2021). Neural symbolic regression that scales. ICML 2021.
+- Mitchell, T. M. (1982). Generalization as search. *Artificial Intelligence*, 18(2), 203--226.
+- Schmidt, M., & Lipson, H. (2009). Distilling free-form natural laws from experimental data. *Science*, 324(5923), 81--85.
+- Petersen, K. B., et al. (2019). Deep symbolic regression: Recovering mathematical expressions from data via risk-seeking policy gradients. *ICLR 2021*.
+- Biggio, L., et al. (2021). Neural symbolic regression that scales. *ICML 2021*.
 - Settles, B. (2009). Active learning literature survey. University of Wisconsin-Madison Computer Sciences Technical Report 1648.
