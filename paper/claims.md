@@ -101,3 +101,21 @@ Before any sentence enters the paper draft, check:
 1. Does it match a supported claim above?
 2. If partially supported, is the caveat stated?
 3. If it matches a forbidden claim, delete it immediately.
+
+## Verifier Claims
+
+### V1: SymPy verifier prototype exists but is not part of P0/P1 results
+
+- **Claim**: A SymPy verifier prototype has been implemented with symbolic equivalence and dimensional homogeneity checks, plus a TypeScript IPC adapter
+- **Evidence**: `tools/sympy_verifier/verify_expr.py`, `src/verifier/verifierClient.ts`, 6/6 pytest tests pass, 6/6 smoke tests pass
+- **Status**: supported (prototype exists)
+- **Allowed wording**: "A SymPy verifier prototype exists as future infrastructure for P2/P3"
+- **Forbidden wording**: "The verifier was used in P0/P1 benchmark results"
+
+### V2: Verifier is future infrastructure for P2/P3
+
+- **Claim**: The verifier is designed for P2/P3 integration, not for P0/P1
+- **Evidence**: By design — verifier is not called from any P0/P1 benchmark code
+- **Status**: supported
+- **Allowed wording**: "The SymPy verifier is future infrastructure for physics-constrained benchmarks"
+- **Forbidden wording**: "The verifier improves P1 results"

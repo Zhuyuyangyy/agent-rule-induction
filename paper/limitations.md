@@ -22,9 +22,9 @@ P1 matches against a known formula library. It does not discover new physical la
 
 The system cannot propose hypotheses outside the pre-defined library. In real science, hypothesis generation is a critical creative step. Our framework currently assumes this step is solved externally.
 
-## L6: No SymPy Verifier Yet
+## L6: SymPy Verifier Is Prototype, Not Yet Integrated
 
-Symbolic equivalence is checked numerically (R^2 on test points), not structurally. Two expressions may have high R^2 but be symbolically different (e.g., |x-1| vs x-1 for x>1). A SymPy-based verifier would strengthen equivalence claims by checking structural equivalence, dimensional homogeneity, and limit behavior. This is planned future work.
+A minimal SymPy verifier prototype has been implemented (Stage 2.5-B) with symbolic equivalence and dimensional homogeneity checks, plus a TypeScript IPC adapter (Stage 2.5-C). However, **the verifier is not part of the reported P0/P1 benchmark results**. Symbolic equivalence in P1 is still checked numerically (R^2 on test points), not structurally. Two expressions may have high R^2 but be symbolically different (e.g., |x-1| vs x-1 for x>1). The verifier is future infrastructure for P2/P3 benchmarks where it will reject invalid candidates based on structural and dimensional constraints.
 
 ## L7: No Real-World Anomaly-Driven Physics Benchmark Yet
 

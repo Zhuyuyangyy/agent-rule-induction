@@ -68,6 +68,29 @@ docs/failure_analysis.md         # P0 failure analysis
 
 P1 benchmark reproduction has no hidden dependency on unavailable API keys. All five baselines (random_search, greedy_symbolic_search, active_random, active_infogain, oracle) are algorithmic and run entirely locally. The only external dependency is Node.js and npm packages.
 
+## SymPy Verifier Reproduction
+
+The SymPy verifier prototype is **not part of the P0/P1 benchmark results** but can be independently verified:
+
+```bash
+# Install SymPy
+pip install sympy>=1.12
+
+# Run CLI examples
+python tools/sympy_verifier/verify_expr.py tools/sympy_verifier/examples/equivalence_pass.json
+python tools/sympy_verifier/verify_expr.py tools/sympy_verifier/examples/equivalence_fail.json
+python tools/sympy_verifier/verify_expr.py tools/sympy_verifier/examples/dimension_pass.json
+python tools/sympy_verifier/verify_expr.py tools/sympy_verifier/examples/dimension_fail.json
+
+# Run pytest tests
+python -m pytest tools/sympy_verifier/tests -v
+
+# Run TypeScript smoke test
+npx tsx src/verifier/smokeTest.ts
+```
+
+The verifier is future infrastructure for P2/P3. It does not affect P0/P1 results.
+
 ## Computational Requirements
 
 - P0 algorithmic baselines: deterministic, no API calls, <1 second
