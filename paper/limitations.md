@@ -34,6 +34,14 @@ No experiments use real experimental data. All evaluations use synthetically gen
 
 P2 uses a simplified L,M,T (length, mass, time) dimension system. This model cannot correctly capture electromagnetism (charge, current, voltage) or thermodynamic (temperature) dimensions. As a result, 6 out of 29 P2 formulas (4 EM + 2 thermo) fail the dimensional validity check. A more complete dimension system (e.g., adding Q for charge and Θ for temperature) would address this but is deferred to future work.
 
+## L13: P4 Uses Simulated LLM Proposals
+
+The P4 benchmark uses template-based candidate generation to simulate LLM proposals, not real LLM API calls. Template-based generation produces ~88% parseable candidates with ~11-14% hallucination rate, but real LLM behavior may differ significantly in syntax, creativity, and error patterns. The P4 results should be interpreted as a proof-of-concept for the verifier-filtered search architecture, not as evidence about real LLM capabilities.
+
+## L14: No Real Experimental Data
+
+All benchmarks use synthetically generated data. P2 uses physics-style formulas but generates data programmatically. P3 uses synthetic anomaly scenarios inspired by historical cases but does not use real experimental data. The gap between synthetic benchmarks and real-world scientific data remains unaddressed.
+
 ## L8: Noise Model Simplification
 
 P1 uses additive Gaussian noise as the only noise model. Real-world noise may be heteroscedastic, systematic, or non-Gaussian. The robustness finding under Gaussian noise may not transfer to more complex noise regimes.

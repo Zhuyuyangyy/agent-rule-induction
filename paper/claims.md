@@ -163,3 +163,29 @@ Before any sentence enters the paper draft, check:
 - **Status**: supported
 - **Allowed wording**: "Verifier constraints eliminate false positive corrections"
 - **Forbidden wording**: "The system surpassed relativity"
+
+## P4 Claims
+
+### P4-C1: P4 explores open-ended candidate generation in controlled settings
+
+- **Claim**: P4 tests whether template-based candidate generation can recover correct formulas
+- **Evidence**: `results/p4_open_ended_search/report.md` — 29 formulas, 6 baselines
+- **Status**: supported
+- **Allowed wording**: "P4 explores open-ended candidate generation in controlled settings"
+- **Forbidden wording**: "The system autonomously discovers new physics"
+
+### P4-C2: LLMs are proposal mechanisms, not final judges
+
+- **Claim**: Template-based LLM proposals achieve ~88% parse success but only ~23% correction recovery
+- **Evidence**: `results/p4_open_ended_search/summary.csv`
+- **Status**: supported
+- **Allowed wording**: "LLMs are used as proposal mechanisms, not final judges"
+- **Forbidden wording**: "The system is a complete AI scientist"
+
+### P4-C3: External verification remains necessary
+
+- **Claim**: Library-based search achieves 100% recovery while LLM-based achieves ~23%
+- **Evidence**: `results/p4_open_ended_search/summary.csv`
+- **Status**: supported
+- **Allowed wording**: "External verification remains necessary"
+- **Forbidden wording**: "The system has solved open-ended scientific discovery"

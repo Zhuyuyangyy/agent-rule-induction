@@ -2,7 +2,7 @@
 
 ## Abstract
 
-We study whether external verifiable search mechanisms can outperform raw large language model (LLM) reasoning in controlled theory-discovery benchmarks. We introduce two benchmarks: P0 (boolean rule induction over 48 candidate rules) and P1 (symbolic expression discovery over 265 candidate formulas under varying noise). In P0, algorithmic information-gain query selection achieves 100.0% accuracy [95% CI: 100%, 100%] across 6 seeds, matching the oracle upper bound, while LLM baselines achieve only 3.6%--21.0%. In P1, active infogain (variance-based query selection) achieves the highest symbolic equivalence rate among non-oracle baselines at all noise levels (98.5% at noise=0, 96.2% at noise=0.1), while using 35--56% fewer queries than greedy search. These results provide early controlled evidence that external verifiable search mechanisms outperform uninformed or LLM-based approaches in both boolean rule induction and symbolic expression discovery. We discuss limitations including fixed hypothesis spaces, single-model LLM validation, and the absence of physical law discovery, and outline a roadmap toward physics-constrained discovery benchmarks. This paper does not claim discovery of new physical laws.
+We study whether external verifiable search mechanisms can outperform raw large language model (LLM) reasoning in controlled theory-discovery benchmarks. We introduce four benchmarks: P0 (boolean rule induction over 48 candidate rules), P1 (symbolic expression discovery over 265 candidate formulas under varying noise), P2 (physics-constrained law rediscovery over 29 physics formulas with dimensional annotations), and P3 (anomaly-driven theory refinement over 8 planted-anomaly scenarios). In P0, algorithmic information-gain query selection achieves 100.0% accuracy [95% CI: 100%, 100%] across 6 seeds, matching the oracle upper bound, while LLM baselines achieve only 3.6%--21.0%. In P1, active infogain achieves the highest symbolic equivalence rate among non-oracle baselines at all noise levels (98.5% at noise=0, 96.2% at noise=0.1). In P2, verifier constraints reject 87.5% of invalid candidates, and all non-random baselines achieve 100% SymEq at noise=0. In P3, active methods recover 75-100% of planted corrections while the verifier eliminates false positives. We additionally prototype P4 (open-ended candidate generation with simulated LLM proposals), showing that template-based candidate generation achieves ~88% parse success but only ~23% correction recovery, compared to 100% for library-based search. These results provide controlled evidence that external verifiable search mechanisms outperform uninformed or LLM-based approaches across increasingly complex discovery settings. We discuss limitations including fixed hypothesis spaces, simplified dimensional models, and the absence of physical law discovery. This paper does not claim discovery of new physical laws.
 
 ## 1. Introduction
 
@@ -260,9 +260,8 @@ Failure analysis serves three purposes in this work:
 All experiments are reproducible from the public repository:
 
 - **Repository**: https://github.com/Zhuyuyangyy/agent-rule-induction
-- **Release tag**: `v0.2.0-stage2-p1`
-- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v0.2.0-stage2-p1
-- **Release artifact**: `active_theory_discovery_stage2_p1_paper_grade.zip`
+- **Final release tag**: `v1.0.0-active-theory-discovery`
+- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v1.0.0-active-theory-discovery
 
 ### Reproduction Commands
 
@@ -270,18 +269,19 @@ All experiments are reproducible from the public repository:
 npm install
 npm run typecheck
 npm test
-npm run p1:benchmark
-npm run p1:benchmark:noisy
 npm run p1:benchmark:multi-noise
+npm run p2:benchmark
+npm run p3:benchmark
+npm run p4:benchmark
 ```
 
-**Important**: P1 benchmark reproduction requires no API keys. All five baselines (random_search, greedy_symbolic_search, active_random, active_infogain, oracle) are algorithmic and run entirely locally.
+**Important**: All benchmarks are algorithmic and require no API keys.
 
 ### Artifact Paths
 
-- `docs/artifacts/p1_multi_noise/report.md`
-- `docs/artifacts/p1_multi_noise/summary.csv`
-- `docs/artifacts/p1_multi_noise/failure_cases.jsonl`
+- `docs/artifacts/p1_multi_noise/` — P1 multi-noise results
+- `docs/artifacts/p2_physics_constrained/` — P2 physics-constrained results
+- `docs/artifacts/p3_anomaly_refinement/` — P3 anomaly-driven results
 
 ### Known Blockers
 
@@ -307,9 +307,13 @@ This is a controlled benchmark paper with explicit boundary conditions. The foll
 
 7. **No dimensional analysis in P1 results yet**: The current P1 benchmark does not use dimensional homogeneity checks. The SymPy verifier prototype supports dimensional analysis but has not been integrated into P1 scoring. This is planned for P2.
 
-8. **No anomaly-driven physics benchmark yet**: All data is synthetically generated with controlled noise. No real experimental data is used.
+8. **No anomaly-driven physics benchmark with real data**: P3 uses synthetic anomaly data, not real experimental data.
 
-9. **Results are early evidence, not proof of a complete AI scientist**: The transition from controlled benchmarks to genuine scientific discovery remains an open challenge.
+9. **Simplified L,M,T dimension model**: P2 uses a simplified dimension system that cannot capture electromagnetism or thermodynamic dimensions correctly. 6 out of 29 P2 formulas fail the dimensional validity check.
+
+10. **P4 uses simulated LLM proposals**: The P4 benchmark uses template-based candidate generation, not real LLM API calls. Real LLM behavior may differ significantly.
+
+11. **Results are early evidence, not proof of a complete AI scientist**: The transition from controlled benchmarks to genuine scientific discovery remains an open challenge.
 
 *See `paper/limitations.md` for detailed discussion.*
 
@@ -325,17 +329,17 @@ The long-term vision of Active Theory Discovery is an "AlphaGo-for-Science" syst
 
 **P3 (completed)**: Anomaly-driven theory refinement. 8 scenarios (6 planted anomalies + 2 null), 7 correction families, 7 baselines. Greedy/active methods recover 75-100% of planted corrections. Verifier eliminates false positives. Controlled sandbox inspired by historical anomalies, NOT real physics discovery.
 
-**P4 (vision)**: Autonomous theory discovery. The long-term goal, but far beyond current evidence.
+**P4 (completed, prototype)**: Open-ended active theory search. Template-based simulated LLM candidate generation with 15 templates. Parse success ~88%, hallucination rate ~11-14%. LLM-based approaches achieve ~23% correction recovery vs. 100% for library-based search. LLMs are proposal mechanisms, not final judges. External verification remains necessary.
 
 **We emphasize: P0 and P1 provide early controlled evidence for the Active Theory Discovery thesis. They do not demonstrate autonomous scientific discovery or new physical law discovery.**
 
 ## 12. Conclusion
 
-We have presented two controlled benchmarks demonstrating that external verifiable search mechanisms outperform raw LLM reasoning in theory discovery tasks. In P0 (boolean rule induction), algorithmic infogain achieves 100.0% accuracy while LLM baselines achieve 3.6%--21.0%. In P1 (symbolic expression discovery), active infogain achieves the highest symbolic equivalence rate among non-oracle baselines (96.2% at noise=0.1) and degrades more gracefully under noise than alternatives.
+We have presented four controlled benchmarks demonstrating that external verifiable search mechanisms outperform raw LLM reasoning in theory discovery tasks. In P0 (boolean rule induction), algorithmic infogain achieves 100.0% accuracy while LLM baselines achieve 3.6%--21.0%. In P1 (symbolic expression discovery), active infogain achieves the highest symbolic equivalence rate among non-oracle baselines (96.2% at noise=0.1) and degrades more gracefully under noise than alternatives. In P2 (physics-constrained law rediscovery), verifier constraints reject 87.5% of invalid candidates while maintaining 100% SymEq at noise=0. In P3 (anomaly-driven refinement), active methods recover 75-100% of planted corrections while the verifier eliminates false positives. In P4 (open-ended search), template-based LLM candidate generation achieves ~88% parse success but only ~23% correction recovery, highlighting the gap between proposal and verification.
 
 These results support the thesis that AI scientific discovery should not rely on raw LLM reasoning alone, but on external verifiable search mechanisms that constrain, refute, and score hypotheses within a searchable space. The Active Theory Discovery framework provides a structured approach to building such systems.
 
-However, P1 remains a symbolic-discovery benchmark, not physical theory discovery. The hypothesis space is fixed and known, the formulas are synthetic, and no real-world data is used. The transition from controlled benchmarks to genuine scientific discovery remains an open challenge.
+However, all benchmarks remain controlled settings with fixed hypothesis spaces. P1 is a symbolic-discovery benchmark, not physical theory discovery. P2 is controlled law rediscovery, not new physics. P3 is a synthetic sandbox, not real anomaly resolution. P4 uses simulated LLM proposals, not real LLM outputs. The transition from controlled benchmarks to genuine scientific discovery remains an open challenge.
 
 ## References
 
