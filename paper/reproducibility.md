@@ -91,6 +91,22 @@ npx tsx src/verifier/smokeTest.ts
 
 The verifier is future infrastructure for P2/P3. It does not affect P0/P1 results.
 
+## P2 Benchmark Reproduction
+
+```bash
+npm run p2:benchmark
+```
+
+Expected runtime: ~1-3 minutes. No API keys required. All 6 baselines are algorithmic.
+
+### P2 Artifact Paths
+
+```text
+docs/artifacts/p2_physics_constrained/report.md          # Full benchmark report
+docs/artifacts/p2_physics_constrained/summary.csv         # Per-baseline, per-noise metrics
+docs/artifacts/p2_physics_constrained/failure_cases.jsonl  # Individual failure cases
+```
+
 ## Computational Requirements
 
 - P0 algorithmic baselines: deterministic, no API calls, <1 second

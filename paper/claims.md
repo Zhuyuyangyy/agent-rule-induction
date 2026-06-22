@@ -119,3 +119,29 @@ Before any sentence enters the paper draft, check:
 - **Status**: supported
 - **Allowed wording**: "The SymPy verifier is future infrastructure for physics-constrained benchmarks"
 - **Forbidden wording**: "The verifier improves P1 results"
+
+## P2 Claims
+
+### P2-C1: P2 evaluates physics-constrained law rediscovery in controlled settings
+
+- **Claim**: P2 tests law rediscovery with dimensional constraints in a controlled sandbox
+- **Evidence**: `docs/artifacts/p2_physics_constrained/report.md` — 29 formulas, 6 baselines, 3 noise levels
+- **Status**: supported
+- **Allowed wording**: "P2 evaluates physics-constrained law rediscovery in controlled settings"
+- **Forbidden wording**: "P2 discovers new physics"
+
+### P2-C2: Verifier constraints reject invalid candidates
+
+- **Claim**: Output dimension matching rejects 87.5% of candidates
+- **Evidence**: `docs/artifacts/p2_physics_constrained/summary.csv` — verifierRejectionRate=0.875
+- **Status**: supported
+- **Allowed wording**: "Verifier constraints improve rejection of invalid symbolic candidates"
+- **Forbidden wording**: "P2 surpasses known physics"
+
+### P2-C3: Simplified LMT model has limitations
+
+- **Claim**: The simplified L,M,T dimension model fails for electromagnetism and thermodynamic formulas
+- **Evidence**: DimValid Rate = 79.3% (23/29 formulas pass); EM formulas use simplified current dimension
+- **Status**: supported (limitation)
+- **Allowed wording**: "The simplified dimension model is a known limitation"
+- **Forbidden wording**: "The dimension model is complete"

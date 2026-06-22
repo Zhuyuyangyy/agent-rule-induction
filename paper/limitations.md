@@ -28,7 +28,11 @@ A minimal SymPy verifier prototype has been implemented (Stage 2.5-B) with symbo
 
 ## L7: No Real-World Anomaly-Driven Physics Benchmark Yet
 
-No experiments use real experimental data. All evaluations use synthetically generated data from known formulas with controlled noise. P2 (physical law recovery) will address this but has not been started.
+No experiments use real experimental data. All evaluations use synthetically generated data from known formulas with controlled noise. P2 (physical law recovery) uses physics-style formulas but still in a controlled sandbox.
+
+## L12: Simplified L,M,T Dimension Model
+
+P2 uses a simplified L,M,T (length, mass, time) dimension system. This model cannot correctly capture electromagnetism (charge, current, voltage) or thermodynamic (temperature) dimensions. As a result, 6 out of 29 P2 formulas (4 EM + 2 thermo) fail the dimensional validity check. A more complete dimension system (e.g., adding Q for charge and Θ for temperature) would address this but is deferred to future work.
 
 ## L8: Noise Model Simplification
 

@@ -321,7 +321,7 @@ The long-term vision of Active Theory Discovery is an "AlphaGo-for-Science" syst
 
 **P1 (completed)**: Symbolic expression discovery. Demonstrates that the mechanism transfers to continuous spaces and is robust to noise.
 
-**P2 (roadmap)**: Physical law recovery. Will use physics-constrained formulas (dimensional homogeneity, conservation laws) and the SymPy verifier to reject invalid candidates. This is the next benchmark, not the current contribution. The verifier prototype exists but is not yet integrated.
+**P2 (completed)**: Physics-constrained law rediscovery. Uses 29 physics formulas with dimensional annotations. Verifier constraints (output dimension matching) reject 87.5% of invalid candidates. All non-random baselines achieve 100% SymEq at noise=0. This is controlled law rediscovery, not new physics discovery. Known limitation: simplified L,M,T dimension model fails for electromagnetism and thermodynamic formulas.
 
 **P3 (roadmap)**: Anomaly-driven theory refinement. Will test whether the system can detect when current theories fail and propose revisions.
 
