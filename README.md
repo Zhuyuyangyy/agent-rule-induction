@@ -7,6 +7,7 @@ A staged framework for investigating whether external verifiable search mechanis
 - **P0 (Rule Induction)**: Completed. Multi-seed validation confirms algorithmic_infogain reaches oracle performance (100%) while LLM baselines underperform (3.6%-21.0%).
 - **P1 (Symbolic Expression Discovery)**: Paper-grade benchmark. 265 formulas, 5 baselines, multi-noise evaluation. Active-infogain achieves highest symbolic equivalence rate among non-oracle baselines.
 - **P2 (Physics-Constrained Law Rediscovery)**: Completed. 29 physics formulas with dimensional annotations, 6 baselines. Verifier constraints reject 87.5% of invalid candidates. Controlled law rediscovery, not new physics.
+- **P3 (Anomaly-Driven Theory Refinement)**: Completed. 8 scenarios, 7 correction families, 7 baselines. Verifier eliminates false positives. Controlled sandbox, not real physics.
 
 ### Stage 1.2 Multi-model Validation
 
@@ -62,6 +63,28 @@ docs/artifacts/p2_physics_constrained/failure_cases.jsonl
 **Academic limitation:**
 
 P2 is controlled law rediscovery, not new physics discovery. Simplified L,M,T dimension model has known limitations for EM/thermo formulas.
+
+### Stage 5 P3
+
+P3 anomaly-driven theory refinement benchmark completed.
+
+**Reproduction commands:**
+
+```bash
+npm run p3:benchmark
+```
+
+**Artifact paths:**
+
+```text
+docs/artifacts/p3_anomaly_refinement/report.md
+docs/artifacts/p3_anomaly_refinement/summary.csv
+docs/artifacts/p3_anomaly_refinement/failure_cases.jsonl
+```
+
+**Academic limitation:**
+
+P3 is a controlled sandbox inspired by historical anomalies, NOT real physics discovery.
 
 ## Quick Start
 

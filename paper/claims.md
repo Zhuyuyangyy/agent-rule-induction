@@ -145,3 +145,21 @@ Before any sentence enters the paper draft, check:
 - **Status**: supported (limitation)
 - **Allowed wording**: "The simplified dimension model is a known limitation"
 - **Forbidden wording**: "The dimension model is complete"
+
+## P3 Claims
+
+### P3-C1: P3 tests anomaly-driven theory refinement in a controlled sandbox
+
+- **Claim**: P3 evaluates whether active search can recover planted correction terms in a controlled setting
+- **Evidence**: `docs/artifacts/p3_anomaly_refinement/report.md` — 8 scenarios, 7 baselines
+- **Status**: supported
+- **Allowed wording**: "P3 tests anomaly-driven theory refinement in a controlled sandbox"
+- **Forbidden wording**: "The system discovered general relativity"
+
+### P3-C2: Verifier eliminates false positives
+
+- **Claim**: active_infogain_plus_verifier has 0% false positive rate
+- **Evidence**: `docs/artifacts/p3_anomaly_refinement/summary.csv` — FP Rate = 0.0 for verifier baseline
+- **Status**: supported
+- **Allowed wording**: "Verifier constraints eliminate false positive corrections"
+- **Forbidden wording**: "The system surpassed relativity"

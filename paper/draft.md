@@ -323,7 +323,7 @@ The long-term vision of Active Theory Discovery is an "AlphaGo-for-Science" syst
 
 **P2 (completed)**: Physics-constrained law rediscovery. Uses 29 physics formulas with dimensional annotations. Verifier constraints (output dimension matching) reject 87.5% of invalid candidates. All non-random baselines achieve 100% SymEq at noise=0. This is controlled law rediscovery, not new physics discovery. Known limitation: simplified L,M,T dimension model fails for electromagnetism and thermodynamic formulas.
 
-**P3 (roadmap)**: Anomaly-driven theory refinement. Will test whether the system can detect when current theories fail and propose revisions.
+**P3 (completed)**: Anomaly-driven theory refinement. 8 scenarios (6 planted anomalies + 2 null), 7 correction families, 7 baselines. Greedy/active methods recover 75-100% of planted corrections. Verifier eliminates false positives. Controlled sandbox inspired by historical anomalies, NOT real physics discovery.
 
 **P4 (vision)**: Autonomous theory discovery. The long-term goal, but far beyond current evidence.
 
