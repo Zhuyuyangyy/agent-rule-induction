@@ -1,0 +1,11 @@
+{
+  "task": "dimension_check",
+  "expr": "G*m1*m2/r**2",
+  "variables": {
+    "G": "L^3 M^-1 T^-2",
+    "m1": "M",
+    "m2": "M",
+    "r": "L"
+  },
+  "expected_dimension": "M L T^-2"
+}

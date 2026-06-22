@@ -1,0 +1,7 @@
+{
+  "task": "equivalence_check",
+  "expr": "x**2",
+  "target_expr": "x**3",
+  "variables": {},
+  "options": {"simplify": true}
+}

@@ -1,0 +1,9 @@
+{
+  "task": "dimension_check",
+  "expr": "m + c**2",
+  "variables": {
+    "m": "M",
+    "c": "L T^-1"
+  },
+  "expected_dimension": "M"
+}
