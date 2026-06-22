@@ -7,7 +7,8 @@
     "test": "tsx src/test.ts",
     "p1:benchmark": "tsx src/p1/p1Benchmark.ts --noise 0 --budget 10 --seeds 3 --output results/p1_benchmark",
     "p1:benchmark:noisy": "tsx src/p1/p1Benchmark.ts --noise 0.05 --budget 10 --seeds 3 --output results/p1_noisy",
-    "p1:benchmark:multi-noise": "tsx src/p1/p1Benchmark.ts --noise 0,0.01,0.05,0.1 --budget 10 --seeds 3 --output results/p1_multi_noise"
+    "p1:benchmark:multi-noise": "tsx src/p1/p1Benchmark.ts --noise 0,0.01,0.05,0.1 --budget 10 --seeds 3 --output results/p1_multi_noise",
+    "p2:benchmark": "tsx src/p2/p2Benchmark.ts --noise 0,0.01,0.05 --budget 10 --seeds 3 --output results/p2_physics_constrained"
   },
   "dependencies": {
     "https-proxy-agent": "^9.1.0",
