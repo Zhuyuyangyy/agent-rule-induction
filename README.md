@@ -1,0 +1,89 @@
+# Active Theory Discovery
+
+A staged framework for investigating whether external verifiable search mechanisms outperform raw LLM reasoning in rule induction and symbolic discovery tasks.
+
+## Project Status
+
+- **P0 (Rule Induction)**: Completed. Multi-seed validation confirms algorithmic_infogain reaches oracle performance (100%) while LLM baselines underperform (3.6%-21.0%).
+- **P1 (Symbolic Expression Discovery)**: Paper-grade benchmark. 265 formulas, 5 baselines, multi-noise evaluation. Active-infogain achieves highest symbolic equivalence rate among non-oracle baselines.
+- **P2 (Physical Law Recovery)**: Roadmap only. Not started.
+- **Multi-model validation**: Blocked. Only deepseek-chat API key available.
+
+## Quick Start
+
+```bash
+npm install
+
+# P0 tests
+npm test
+npm run typecheck
+
+# P1 benchmarks
+npm run p1:benchmark          # noise=0
+npm run p1:benchmark:noisy    # noise=0.05
+npm run p1:benchmark:multi-noise  # noise=0,0.01,0.05,0.1
+```
+
+## Key Results
+
+### P0: Boolean Rule Induction (6 seeds)
+
+| Condition | Accuracy | 95% CI |
+|-----------|--------:|-------:|
+| algorithmic_infogain | 100.0% | [100%, 100%] |
+| oracle_version_space | 100.0% | [100%, 100%] |
+| algorithmic_random_query | 70.8% | [65.8%, 75.8%] |
+| llm_scaffold | 21.0% | [16.6%, 25.6%] |
+| llm_active | 13.2% | [11.6%, 15.0%] |
+| llm_passive | 3.6% | [1.8%, 5.4%] |
+
+### P1: Symbolic Expression Discovery (265 formulas, 3 seeds)
+
+| Baseline | Noise=0 SymEq | Noise=0.1 SymEq | Avg Queries |
+|----------|--------------:|----------------:|------------:|
+| random_search | 1.3% | 1.3% | 0 |
+| greedy_symbolic_search | 98.2% | 95.5% | 10 |
+| active_random | 98.2% | 92.5% | 6.7 |
+| **active_infogain** | **98.5%** | **96.2%** | **6.5** |
+| oracle | 100.0% | 100.0% | 0 |
+
+## Project Structure
+
+```
+src/
+  p0/  (root-level files)
+    rules.ts, env.ts, taskGenerator.ts    # P0 core
+    runActive.ts, runPassive.ts, ...      # LLM condition runners
+    multiSeedAnalysis.ts                  # Multi-seed + bootstrap CI
+    failureAnalysis.ts                    # P0 failure classification
+    conditionNames.ts                     # Canonical naming
+  p1/
+    symbolicExpr.ts    # Core DSL for symbolic expressions
+    formulaLibrary.ts  # 265 formulas across 7 categories
+    dataset.ts         # Dataset generation with noise
+    p1Score.ts         # Scoring metrics
+    baselines.ts       # 5 baselines (random, greedy, active_random, active_infogain, oracle)
+    p1Benchmark.ts     # Main benchmark runner
+    p1FailureAnalysis.ts # Failure classification
+docs/
+  p0_multiseed_report.md
+  p0_benchmark.md
+  failure_analysis.md
+  p1_prototype.md
+  p1_failure_analysis.md
+results/
+  p1_benchmark/
+  p1_noisy/
+  p1_multi_noise/
+```
+
+## Core Thesis
+
+> External algorithmic information-gain mechanisms (version-space narrowing, variance-based query selection) consistently outperform raw LLM reasoning or simple heuristics in both boolean rule induction and symbolic expression discovery. This supports the need for verifiable search scaffolding rather than relying on LLM reasoning alone.
+
+## What This Project Does NOT Claim
+
+- It does NOT discover new physical laws
+- It does NOT complete "AI scientist"
+- It does NOT demonstrate deeper physics understanding
+- P2 (physical law recovery) is roadmap only and has not been started
