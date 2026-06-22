@@ -7,7 +7,39 @@ A staged framework for investigating whether external verifiable search mechanis
 - **P0 (Rule Induction)**: Completed. Multi-seed validation confirms algorithmic_infogain reaches oracle performance (100%) while LLM baselines underperform (3.6%-21.0%).
 - **P1 (Symbolic Expression Discovery)**: Paper-grade benchmark. 265 formulas, 5 baselines, multi-noise evaluation. Active-infogain achieves highest symbolic equivalence rate among non-oracle baselines.
 - **P2 (Physical Law Recovery)**: Roadmap only. Not started.
-- **Multi-model validation**: Blocked. Only deepseek-chat API key available.
+
+### Stage 1.2 Multi-model Validation
+
+- **Status**: blocked
+- **Reason**: only deepseek-chat API key is currently available.
+- **Next action**: resume when gpt-4.1-mini / claude / qwen / kimi keys are provided.
+
+### Stage 2 P1
+
+P1 symbolic discovery benchmark completed with reproducible scripts.
+
+**Reproduction commands:**
+
+```bash
+npm install
+npm run typecheck
+npm test
+npm run p1:benchmark
+npm run p1:benchmark:noisy
+npm run p1:benchmark:multi-noise
+```
+
+**Artifact paths:**
+
+```text
+docs/artifacts/p1_multi_noise/report.md
+docs/artifacts/p1_multi_noise/summary.csv
+docs/artifacts/p1_multi_noise/failure_cases.jsonl
+```
+
+**Academic limitation:**
+
+P1 is a symbolic-discovery benchmark, not physical theory discovery.
 
 ## Quick Start
 
@@ -49,7 +81,7 @@ npm run p1:benchmark:multi-noise  # noise=0,0.01,0.05,0.1
 
 ## Project Structure
 
-```
+```text
 src/
   p0/  (root-level files)
     rules.ts, env.ts, taskGenerator.ts    # P0 core
@@ -71,10 +103,11 @@ docs/
   failure_analysis.md
   p1_prototype.md
   p1_failure_analysis.md
-results/
-  p1_benchmark/
-  p1_noisy/
-  p1_multi_noise/
+  artifacts/
+    p1_multi_noise/
+      report.md
+      summary.csv
+      failure_cases.jsonl
 ```
 
 ## Core Thesis
@@ -87,3 +120,5 @@ results/
 - It does NOT complete "AI scientist"
 - It does NOT demonstrate deeper physics understanding
 - P2 (physical law recovery) is roadmap only and has not been started
+
+Active-infogain improves symbolic-equivalence robustness under noisy conditions, while P1 remains a symbolic-discovery benchmark rather than physical theory discovery.
