@@ -2,9 +2,9 @@
 
 ## Repository
 
-- URL: https://github.com/Zhuyuyangyy/agent-rule-induction
-- Release tag: `v0.2.0-stage2-p1`
-- Release page: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v0.2.0-stage2-p1
+- **URL**: https://github.com/Zhuyuyangyy/agent-rule-induction
+- **Release tag**: `v0.2.0-stage2-p1`
+- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v0.2.0-stage2-p1
 
 ## Environment
 
@@ -15,7 +15,7 @@
 ## Reproduction Steps
 
 ```bash
-git clone https://github.com/Zhuyangyy/agent-rule-induction.git
+git clone https://github.com/Zhuyuyangyy/agent-rule-induction.git
 cd agent-rule-induction
 git checkout v0.2.0-stage2-p1
 npm install
@@ -37,6 +37,8 @@ npm run p1:benchmark:multi-noise  # noise=0,0.01,0.05,0.1, 3 seeds
 ```
 
 Expected runtime: ~2-5 minutes per benchmark command on a standard machine.
+
+**Important**: P1 benchmark reproduction requires no API keys. All algorithmic baselines run locally and deterministically.
 
 ## Artifact Paths
 
@@ -61,6 +63,10 @@ docs/failure_analysis.md         # P0 failure analysis
 
 - **Stage 1.2 multi-model validation**: blocked by unavailable API keys. Only deepseek-chat is currently available. Cross-model generalization requires gpt-4.1-mini, Claude, Qwen, or Kimi keys.
 - **LLM experiment reproduction**: requires a valid DeepSeek API key set in environment. Algorithmic baselines (the main evidence) require no API key and are fully reproducible.
+
+## No Hidden Dependencies
+
+P1 benchmark reproduction has no hidden dependency on unavailable API keys. All five baselines (random_search, greedy_symbolic_search, active_random, active_infogain, oracle) are algorithmic and run entirely locally. The only external dependency is Node.js and npm packages.
 
 ## Computational Requirements
 

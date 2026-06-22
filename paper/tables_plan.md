@@ -46,17 +46,29 @@ Source: `docs/p1_failure_analysis.md`
 | overfit_noise | 4 | fit noise rather than true function |
 
 By baseline:
+
 - random_search: 1052 failures
 - active_random: 102 failures
 - greedy_symbolic_search: 41 failures
 - active_infogain: 18 failures (fewest among non-oracle baselines)
 
-## Table 4: Current Limitation and Future Work
+## Table 4: Claim/Evidence Ledger
 
-| Limitation | Status | Next Action |
-|-----------|--------|-------------|
-| LLM baselines tested on deepseek-chat only | blocked | Need gpt-4.1-mini / Claude / Qwen / Kimi keys |
-| P1 uses fixed formula library | by design | Future: open-ended symbolic regression |
-| No SymPy-based symbolic verifier | planned | Stage 2.5: design doc first |
-| P2 physical law recovery not started | roadmap | Depends on P1 paper completion |
-| No real-world physics data | roadmap | P2 will use physics-constrained formulas |
+| Claim ID | Claim | Evidence | Status |
+|----------|-------|----------|--------|
+| C1 | algorithmic_infogain reaches oracle in P0 | `docs/p0_multiseed_report.md` | supported |
+| C2 | LLM baselines underperform in P0 | `docs/p0_multiseed_report.md` | supported |
+| C3 | P1 extends mechanism to symbolic discovery | `docs/artifacts/p1_multi_noise/summary.csv` | supported |
+| C4 | active_infogain improves noise robustness | `docs/artifacts/p1_multi_noise/summary.csv` | supported |
+| C5 | P1 is not physical theory discovery | By design | supported |
+| C6 | Cross-model validation blocked | `docs/p0_multiseed_report.md` | supported |
+
+## Table 5: Reproducibility Table
+
+| Item | Value |
+|------|-------|
+| Repository | https://github.com/Zhuyuyangyy/agent-rule-induction |
+| Release tag | v0.2.0-stage2-p1 |
+| P1 reproduction | `npm run p1:benchmark:multi-noise` |
+| API keys needed for P1 | None |
+| Known blocker | Stage 1.2 multi-model (no API keys) |

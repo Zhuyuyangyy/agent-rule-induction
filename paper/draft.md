@@ -104,13 +104,13 @@ We compare five strategies:
 | llm_active | 5 | 13.2% | [11.6%, 15.0%] |
 | llm_passive | 5 | 3.6% | [1.8%, 5.4%] |
 
-*Source: `docs/p0_multiseed_report.md`*
+*Evidence: `docs/p0_multiseed_report.md`*
 
 ### 4.3 Analysis
 
 Algorithmic infogain reaches oracle performance (100.0%) across all 6 seeds, confirming that the version-space mechanism is both sufficient and efficient for this task. The average query count is 3.37 (out of 6), meaning infogain typically identifies the correct rule in just over 3 queries.
 
-LLM baselines dramatically underperform. Even llm_scaffold, which provides structured reasoning templates and active querying capabilities, achieves only 21.0%. Llm_passive, which receives only observations without querying, achieves 3.6%. This gap is not a seed artifact—it holds across all seeds tested.
+LLM baselines dramatically underperform. Even llm_scaffold, which provides structured reasoning templates and active querying capabilities, achieves only 21.0%. Llm_passive, which receives only observations without querying, achieves 3.6%. This gap is not a seed artifact — it holds across all seeds tested.
 
 ### 4.4 Failure Analysis
 
@@ -121,7 +121,7 @@ LLM failures fall into four categories:
 - **overconfident_guess** (2 cases): LLM answered too early with insufficient queries
 - **timeout** (1 case): Budget exhausted without final answer
 
-*Source: `docs/failure_analysis.md`*
+*Evidence: `docs/failure_analysis.md`*
 
 ## 5. P1: Symbolic Discovery Benchmark
 
@@ -144,7 +144,7 @@ LLM failures fall into four categories:
 | **active_infogain** | **98.5%** | **96.2%** | **6.5** |
 | oracle | 100.0% | 100.0% | 0 |
 
-*Source: `docs/artifacts/p1_multi_noise/summary.csv`*
+*Evidence: `docs/artifacts/p1_multi_noise/summary.csv`*
 
 ### 5.3 Noise Robustness
 
@@ -189,11 +189,14 @@ At noise=0.1, active_infogain vs other baselines (heldoutAccuracy):
 
 Active infogain significantly outperforms random search and is competitive with greedy search on R^2, while achieving higher symbolic equivalence rates.
 
+*Evidence: `docs/artifacts/p1_multi_noise/report.md`*
+
 ## 7. Failure Analysis
 
 ### 7.1 P0 Failures
 
 LLM failures in P0 are characterized by:
+
 - Inability to systematically narrow the version space
 - Overconfident guessing before sufficient observations
 - Predicting rules outside the remaining version space
@@ -208,26 +211,34 @@ LLM failures in P0 are characterized by:
 | overfit_noise | 4 | fit noise rather than true function |
 
 By baseline:
+
 - random_search: 1052 failures
 - active_random: 102 failures
 - greedy_symbolic_search: 41 failures
 - **active_infogain: 18 failures** (fewest among non-oracle baselines)
 
-*Source: `docs/p1_failure_analysis.md`*
+*Evidence: `docs/p1_failure_analysis.md`, `docs/artifacts/p1_multi_noise/failure_cases.jsonl`*
 
 ### 7.3 Failure Patterns
 
-The most informative failure type is **symbolic_mismatch**: expressions that are numerically close (R^2 > 0.9) but symbolically different. These occur primarily with absolute-value expressions (e.g., |x-1| vs x-1 for x>1) and highlight a fundamental challenge—numerical agreement does not guarantee symbolic equivalence.
+The most informative failure type is **symbolic_mismatch**: expressions that are numerically close (R^2 > 0.9) but symbolically different. These occur primarily with absolute-value expressions (e.g., |x-1| vs x-1 for x>1) and highlight a fundamental challenge — numerical agreement does not guarantee symbolic equivalence.
+
+A SymPy-based symbolic verifier could address this limitation by checking structural equivalence, dimensional homogeneity, and limit behavior. However, such a verifier is future work and not part of the current results.
 
 ## 8. Limitations
 
-1. **Single-model LLM validation**: LLM baselines are tested on deepseek-chat only. Cross-model generalization is blocked by unavailable API keys.
-2. **Fixed hypothesis space**: Both P0 and P1 assume known candidate sets. Real discovery involves open-ended search.
-3. **Synthetic formulas**: P1 uses synthetic formulas as primary evidence. Classic formulas are illustrative only.
-4. **No real-world data**: All evaluations use synthetic data with controlled noise.
-5. **Simplified noise model**: Only additive Gaussian noise is tested.
-6. **No LLM baselines in P1**: P1 includes only algorithmic baselines.
-7. **Classic formula ambiguity**: Some classic formulas are numerically indistinguishable.
+This is a controlled benchmark paper with known boundary conditions. The following limitations apply:
+
+1. **Fixed hypothesis spaces**: Both P0 and P1 assume known candidate sets. Real discovery involves open-ended search where the true hypothesis may not be in the initial set.
+2. **Synthetic benchmark limitation**: P1 uses 245 synthetic formulas as primary evidence. The 20 classic physics formulas are illustrative demos only and are not treated as evidence of physical law discovery.
+3. **Single-model LLM validation**: LLM baselines are tested on deepseek-chat only. Cross-model generalization is blocked by unavailable API keys (gpt-4.1-mini, Claude, Qwen, Kimi).
+4. **No physical law discovery claim**: P1 matches against a known formula library. It does not discover new physical laws.
+5. **No open-ended theory generation yet**: The system cannot propose hypotheses outside the pre-defined library.
+6. **No SymPy verifier yet**: Symbolic equivalence is checked numerically, not structurally. A SymPy-based verifier would strengthen equivalence claims but is planned future work.
+7. **No real-world anomaly-driven physics benchmark yet**: All data is synthetically generated with controlled noise. No real experimental data is used.
+8. **Simplified noise model**: Only additive Gaussian noise is tested.
+9. **No LLM baselines in P1**: P1 includes only algorithmic baselines. LLM baselines for symbolic discovery are deferred.
+10. **Classic formula ambiguity**: Some classic formulas are numerically indistinguishable (e.g., F=ma and p=mv both compute x1*x2).
 
 *See `paper/limitations.md` for detailed discussion.*
 
@@ -259,12 +270,35 @@ However, P1 remains a symbolic-discovery benchmark, not physical theory discover
 
 All experiments are reproducible from the public repository:
 
-- Repository: https://github.com/Zhuyuyangyy/agent-rule-induction
-- Release tag: `v0.2.0-stage2-p1`
-- Reproduction commands: `npm install && npm run typecheck && npm test && npm run p1:benchmark:multi-noise`
-- Artifacts: `docs/artifacts/p1_multi_noise/`
+- **Repository**: https://github.com/Zhuyuyangyy/agent-rule-induction
+- **Release tag**: `v0.2.0-stage2-p1`
+- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v0.2.0-stage2-p1
 
-Known blocker: Stage 1.2 multi-model validation is blocked by unavailable API keys (only deepseek-chat available).
+Reproduction commands:
+
+```bash
+npm install
+npm run typecheck
+npm test
+npm run p1:benchmark
+npm run p1:benchmark:noisy
+npm run p1:benchmark:multi-noise
+```
+
+Artifact paths:
+
+- `docs/artifacts/p1_multi_noise/report.md`
+- `docs/artifacts/p1_multi_noise/summary.csv`
+- `docs/artifacts/p1_multi_noise/failure_cases.jsonl`
+
+Additional documentation:
+
+- `docs/p0_multiseed_report.md` — P0 multi-seed results
+- `docs/p1_prototype.md` — P1 prototype report
+- `docs/p1_failure_analysis.md` — P1 failure analysis
+- `docs/failure_analysis.md` — P0 failure analysis
+
+Known blocker: Stage 1.2 multi-model validation is blocked by unavailable API keys (only deepseek-chat available). P1 benchmark reproduction requires no API keys.
 
 *See `paper/reproducibility.md` for full details.*
 
