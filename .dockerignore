@@ -1,0 +1,10 @@
+node_modules
+results
+.git
+*.md
+!docs/**/*.md
+!paper/**/*.md
+!src/**/*.md
+__pycache__
+*.pyc
+.env

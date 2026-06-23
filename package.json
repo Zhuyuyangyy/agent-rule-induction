@@ -1,6 +1,6 @@
 {
   "name": "active-theory-discovery",
-  "version": "0.2.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -10,7 +10,10 @@
     "p1:benchmark:multi-noise": "tsx src/p1/p1Benchmark.ts --noise 0,0.01,0.05,0.1 --budget 10 --seeds 3 --output results/p1_multi_noise",
     "p2:benchmark": "tsx src/p2/p2Benchmark.ts --noise 0,0.01,0.05 --budget 10 --seeds 3 --output results/p2_physics_constrained",
     "p3:benchmark": "tsx src/p3/p3Benchmark.ts --noise 0,0.01,0.05 --budget 10 --seeds 3 --output results/p3_anomaly_refinement",
-    "p4:benchmark": "tsx src/p4/p4Benchmark.ts --noise 0,0.01,0.05 --budget 10 --seeds 3 --output results/p4_open_ended_search"
+    "p4:benchmark": "tsx src/p4/p4Benchmark.ts --noise 0,0.01,0.05 --budget 10 --seeds 3 --output results/p4_open_ended_search",
+    "reproduce:core": "bash scripts/reproduce_core.sh",
+    "audit:claims": "bash scripts/audit_claims.sh",
+    "audit:artifacts": "bash scripts/audit_artifacts.sh"
   },
   "dependencies": {
     "https-proxy-agent": "^9.1.0",
