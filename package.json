@@ -11,6 +11,7 @@
     "p2:benchmark": "tsx src/p2/p2Benchmark.ts --noise 0,0.01,0.05 --budget 10 --seeds 3 --output results/p2_physics_constrained",
     "p3:benchmark": "tsx src/p3/p3Benchmark.ts --noise 0,0.01,0.05 --budget 10 --seeds 3 --output results/p3_anomaly_refinement",
     "p4:benchmark": "tsx src/p4/p4Benchmark.ts --noise 0,0.01,0.05 --budget 10 --seeds 3 --output results/p4_open_ended_search",
+    "p5:benchmark": "tsx src/p5/p5Benchmark.ts --noise 0,0.01,0.05 --budget 10 --seeds 3 --output results/p5_causal_mechanism",
     "reproduce:core": "bash scripts/reproduce_core.sh",
     "audit:claims": "bash scripts/audit_claims.sh",
     "audit:artifacts": "bash scripts/audit_artifacts.sh",
