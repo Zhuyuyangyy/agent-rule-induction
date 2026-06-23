@@ -2,7 +2,7 @@
 
 ## Abstract
 
-We study whether external verifiable search mechanisms can outperform raw large language model (LLM) reasoning in controlled theory-discovery benchmarks. We introduce a five-rung benchmark ladder — P0 through P4 — spanning boolean rule induction, symbolic expression discovery, physics-constrained law rediscovery, anomaly-driven theory refinement, and open-ended candidate generation. In P0 (48 candidate boolean rules), algorithmic information-gain query selection achieves 100.0% accuracy [95% CI: 100%, 100%] across 6 seeds, matching the oracle upper bound, while LLM baselines achieve only 3.6%--21.0%. In P1 (265 candidate symbolic expressions under varying noise), active infogain achieves the highest symbolic equivalence rate among non-oracle baselines at all noise levels (98.5% at noise=0, 96.2% at noise=0.1). In P2 (29 physics formulas with dimensional annotations), verifier constraints reject 87.5% of invalid candidates, and all non-random baselines achieve 100% SymEq at noise=0. In P3 (8 planted-anomaly scenarios), active methods recover 75--100% of planted corrections while the verifier eliminates false positives (0% FP rate). In P4 (template-based simulated LLM candidate generation with 15 templates), parse success reaches ~88% but LLM-based correction recovery is only ~23%, compared to 100% for library-based search. These results provide controlled evidence that external verifiable search mechanisms outperform uninformed or LLM-based approaches across increasingly complex discovery settings. We discuss limitations including fixed hypothesis spaces, simplified dimensional models, and the absence of physical law discovery. **This paper does not claim discovery of new physical laws.**
+We study whether external verifiable search mechanisms can outperform raw large language model (LLM) reasoning in controlled theory-discovery benchmarks. We introduce a six-rung benchmark ladder — P0 through P5 — spanning boolean rule induction, symbolic expression discovery, physics-constrained law rediscovery, anomaly-driven theory refinement, open-ended candidate generation, and causal mechanism discovery. In P0 (48 candidate boolean rules), algorithmic information-gain query selection achieves 100.0% accuracy [95% CI: 100%, 100%] across 6 seeds, matching the oracle upper bound, while LLM baselines achieve only 3.6%--21.0%. In P1 (265 candidate symbolic expressions under varying noise), active infogain achieves the highest symbolic equivalence rate among non-oracle baselines at all noise levels (98.5% at noise=0, 96.2% at noise=0.1). In P2 (29 physics formulas with dimensional annotations), verifier constraints reject 87.5% of invalid candidates, and all non-random baselines achieve 100% SymEq at noise=0. In P3 (8 planted-anomaly scenarios), active methods recover 75--100% of planted corrections while the verifier eliminates false positives (0% FP rate). In P4 (template-based simulated LLM candidate generation with 15 templates), parse success reaches ~88% but LLM-based correction recovery is only ~23%, compared to 100% for library-based search. In P5 (8 causal graph configurations), active intervention selection improves causal graph recovery over random baselines. These results provide controlled evidence that external verifiable search mechanisms outperform uninformed or LLM-based approaches across increasingly complex discovery settings. We discuss limitations including fixed hypothesis spaces, simplified dimensional models, and the absence of physical law discovery. **This paper does not claim discovery of new physical laws.**
 
 ## 1. Introduction
 
@@ -26,7 +26,7 @@ We evaluate this thesis through five controlled benchmarks of increasing complex
 - **P3 (Anomaly-Driven Refinement)**: Recover planted correction terms in 8 anomaly scenarios with verifier-gated acceptance
 - **P4 (Open-Ended Search)**: Generate and verify candidate expressions via template-based simulated LLM proposals
 
-**We do not claim that this system discovers new physical laws.** P0 through P4 are controlled benchmarks with known hypothesis spaces. They provide evidence for the Active Theory Discovery thesis, not evidence for autonomous scientific discovery.
+**We do not claim that this system discovers new physical laws.** P0 through P5 are controlled benchmarks with known hypothesis spaces. They provide evidence for the Active Theory Discovery thesis, not evidence for autonomous scientific discovery.
 
 ## 2. Contributions
 
@@ -148,11 +148,11 @@ where:
 - I_exp is experimental support (number and diversity of confirming observations)
 - K is complexity penalty (Occam's razor term)
 
-**Important**: P0--P4 currently instantiate only parts of this broader score (primarily A_pred, ΔC, and I_consist in P2/P3). The full scoring function is a future framing, not currently instantiated. Current results should not be interpreted as open-ended physics discovery.
+**Important**: P0--P5 currently instantiate only parts of this broader score (primarily A_pred, ΔC, and I_consist in P2/P3). The full scoring function is a future framing, not currently instantiated. Current results should not be interpreted as open-ended physics discovery.
 
 ## 5. Benchmark Suite
 
-We introduce a unified benchmark suite organized as a five-rung ladder of increasing complexity. Each rung adds a new challenge to the discovery problem:
+We introduce a unified benchmark suite organized as a six-rung ladder of increasing complexity. Each rung adds a new challenge to the discovery problem:
 
 | Rung | Name | Hypothesis Space | Key Addition | Candidates |
 |------|------|-----------------|--------------|-----------:|
@@ -161,6 +161,7 @@ We introduce a unified benchmark suite organized as a five-rung ladder of increa
 | P2 | Physics-Constrained Rediscovery | Physics formulas | Dimensional verification | 29 |
 | P3 | Anomaly-Driven Refinement | Correction terms | Anomaly detection, verifier gating | 8 scenarios |
 | P4 | Open-Ended Search | Template-generated expressions | Open-ended candidate generation | 15 templates |
+| P5 | Causal Mechanism Discovery | Causal graphs | Intervention-based discovery | 8 configs |
 
 The ladder is designed so that each rung subsumes the challenges of the previous one:
 
@@ -168,6 +169,7 @@ The ladder is designed so that each rung subsumes the challenges of the previous
 - **P1 → P2**: Domain constraints (dimensional homogeneity) are added; the hypothesis space is physics-specific
 - **P2 → P3**: The task shifts from identifying a single formula to detecting anomalies and proposing corrections; the verifier gates acceptance
 - **P3 → P4**: The hypothesis space is no longer pre-defined; candidates are generated by a template-based simulated LLM
+- **P4 → P5**: The task shifts from formula discovery to causal structure discovery; interventions replace passive observations
 
 This progressive structure allows us to isolate the contribution of each mechanism (active querying, noise handling, verification, anomaly detection, open-ended generation) to the overall discovery performance.
 
@@ -528,15 +530,15 @@ All experiments are reproducible from the public repository.
 ### 14.1 Repository and Release
 
 - **Repository**: https://github.com/Zhuyuyangyy/agent-rule-induction
-- **Release tag**: `v1.0.0-active-theory-discovery`
-- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v1.0.0-active-theory-discovery
+- **Release tag**: `v2.0.0-active-theory-discovery-platform`
+- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v2.0.0-active-theory-discovery-platform
 
 ### 14.2 Reproduction Commands
 
 ```bash
 git clone https://github.com/Zhuyuyangyy/agent-rule-induction.git
 cd agent-rule-induction
-git checkout v1.0.0-active-theory-discovery
+git checkout v2.0.0-active-theory-discovery-platform
 npm install
 npm run typecheck
 npm test
@@ -544,9 +546,10 @@ npm run p1:benchmark:multi-noise
 npm run p2:benchmark
 npm run p3:benchmark
 npm run p4:benchmark
+npm run p5:benchmark
 ```
 
-**Important**: All benchmarks are algorithmic and require no API keys. P0--P4 algorithmic baselines run entirely locally and deterministically. LLM baselines require a DeepSeek API key but are not the primary evidence.
+**Important**: All benchmarks are algorithmic and require no API keys. P0--P5 algorithmic baselines run entirely locally and deterministically. LLM baselines require a DeepSeek API key but are not the primary evidence.
 
 ### 14.3 Artifact Paths
 
@@ -588,7 +591,7 @@ The long-term vision of Active Theory Discovery is an "AlphaGo-for-Science" syst
 
 **P4 (completed, prototype)**: Open-ended active theory search. Tests whether template-based candidate generation can replace library-based search. The core finding: template-based generation achieves ~88% parse success but only ~23% correction recovery, compared to 100% for library-based search. LLMs are proposal mechanisms, not final judges. External verification remains necessary.
 
-**We emphasize: P0 through P4 provide controlled evidence for the Active Theory Discovery thesis. They do not demonstrate autonomous scientific discovery or new physical law discovery.**
+**We emphasize: P0 through P5 provide controlled evidence for the Active Theory Discovery thesis. They do not demonstrate autonomous scientific discovery or new physical law discovery.**
 
 The path from P4 to genuine AlphaGo-for-Science requires addressing several open challenges: richer candidate generation (real LLMs or neuro-symbolic generators), more complete dimension systems, integration with real experimental data, and the ability to propose genuinely novel hypotheses outside any pre-defined template space. The Long-Term Theory Score (Section 4.5) provides a framing for these future developments but is not currently instantiated.
 

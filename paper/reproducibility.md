@@ -70,7 +70,7 @@ P1 benchmark reproduction has no hidden dependency on unavailable API keys. All 
 
 ## SymPy Verifier Reproduction
 
-The SymPy verifier prototype is **not part of the P0/P1 benchmark results** but can be independently verified:
+The SymPy verifier is **not part of the P0/P1 benchmark results** but is integrated into P2/P3/P4 and can be independently verified:
 
 ```bash
 # Install SymPy
