@@ -9,7 +9,9 @@ A staged framework for investigating whether external verifiable search mechanis
 - **P2 (Physics-Constrained Law Rediscovery)**: Completed. 29 physics formulas with dimensional annotations, 6 baselines. Verifier constraints reject 87.5% of invalid candidates. Controlled law rediscovery, not new physics.
 - **P3 (Anomaly-Driven Theory Refinement)**: Completed. 8 scenarios, 7 correction families, 7 baselines. Verifier eliminates false positives. Controlled sandbox, not real physics.
 - **P4 (Open-Ended Active Theory Search)**: Completed (prototype). Template-based simulated LLM candidate generation, 6 baselines. LLMs are proposal mechanisms, not final judges. External verification remains necessary.
-- **Final release**: `v1.0.0-active-theory-discovery` (commit `a01b266`)
+- **P5 (Causal Mechanism Discovery)**: Completed. 8 graph configurations, 5 baselines. Active intervention selection improves graph recovery. Controlled causal benchmark, not real-world causal discovery.
+- **Multi-Agent Workflow**: Completed. 6 bounded agents (proposer, experiment designer, verifier, skeptic, reviewer, archivist). LLM can only propose, never judge.
+- **Current release**: `v2.0.0-active-theory-discovery-platform`
 
 ### Stage 1.2 Multi-model Validation
 
@@ -106,6 +108,16 @@ npm run p1:benchmark:multi-noise  # noise=0,0.01,0.05,0.1
 npm run p2:benchmark
 npm run p3:benchmark
 npm run p4:benchmark
+
+# P5 causal mechanism benchmark
+npm run p5:benchmark
+
+# Reproduce all core benchmarks
+npm run reproduce:core
+
+# Audit commands
+npm run audit:claims
+npm run audit:artifacts
 ```
 
 All benchmarks are algorithmic and require no API keys.
@@ -168,8 +180,28 @@ src/
     candidateGenerator.ts  # Template-based simulated LLM
     candidateParser.ts   # Candidate expression parser
     verifierFilteredSearch.ts  # Verifier-filtered search
+  p5/
+    p5Benchmark.ts       # P5 benchmark runner (5 baselines)
+    causalGraph.ts       # DAG generation and analysis
+    interventionDataset.ts  # Synthetic data with interventions
+    p5Score.ts           # Causal discovery metrics
+  core/
+    types.ts             # Shared benchmark types
+    seed.ts              # Seeded PRNG
+    metrics.ts           # Bootstrap CI, mean, stddev
+    artifactWriter.ts    # Standardized artifact output
+    runner.ts            # Unified benchmark runner
+  agents/
+    proposerAgent.ts     # Template-based candidate generation
+    experimentDesignerAgent.ts  # Max-variance query selection
+    verifierAgent.ts     # SymPy-based constraint checking
+    skepticAgent.ts      # Overfitting/complexity detection
+    reviewerAgent.ts     # Forbidden claim checking
+    archivistAgent.ts    # Audit log and manifest writing
+    workflow.ts          # Multi-agent orchestration
   verifier/
     verifierClient.ts    # TypeScript IPC adapter for SymPy verifier
+    verifierTypes.ts     # Verifier type definitions
     smokeTest.ts         # Verifier smoke tests
 tools/
   sympy_verifier/
@@ -200,13 +232,13 @@ paper/
 
 ## Core Thesis
 
-> External algorithmic information-gain mechanisms (version-space narrowing, variance-based query selection) consistently outperform raw LLM reasoning or simple heuristics across controlled discovery settings — from boolean rule induction (P0) through symbolic expression discovery (P1), physics-constrained law rediscovery (P2), anomaly-driven refinement (P3), and open-ended candidate search (P4). This supports the need for verifiable search scaffolding rather than relying on LLM reasoning alone.
+> External algorithmic information-gain mechanisms (version-space narrowing, variance-based query selection) consistently outperform raw LLM reasoning or simple heuristics across controlled discovery settings — from boolean rule induction (P0) through symbolic expression discovery (P1), physics-constrained law rediscovery (P2), anomaly-driven refinement (P3), open-ended candidate search (P4), and causal mechanism discovery (P5). This supports the need for verifiable search scaffolding rather than relying on LLM reasoning alone.
 
 ## What This Project Does NOT Claim
 
 - It does NOT discover new physical laws
 - It does NOT complete "AI scientist"
 - It does NOT demonstrate deeper physics understanding
-- P2/P3/P4 remain controlled benchmark settings, not real physics discovery
+- P2/P3/P4/P5 remain controlled benchmark settings, not real physics or causal discovery
 
-This project does not claim discovery of new physical laws. This project does not claim to be a complete AI scientist. P2 is controlled law rediscovery, P3 is a controlled sandbox, and P4 uses simulated LLM proposals. All benchmarks operate within fixed hypothesis spaces.
+This project does not claim discovery of new physical laws. This project does not claim to be a complete AI scientist. P2 is controlled law rediscovery, P3 is a controlled sandbox, P4 uses simulated LLM proposals, and P5 is controlled causal benchmark. All benchmarks operate within fixed or bounded hypothesis spaces.
