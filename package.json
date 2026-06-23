@@ -13,7 +13,12 @@
     "p4:benchmark": "tsx src/p4/p4Benchmark.ts --noise 0,0.01,0.05 --budget 10 --seeds 3 --output results/p4_open_ended_search",
     "reproduce:core": "bash scripts/reproduce_core.sh",
     "audit:claims": "bash scripts/audit_claims.sh",
-    "audit:artifacts": "bash scripts/audit_artifacts.sh"
+    "audit:artifacts": "bash scripts/audit_artifacts.sh",
+    "benchmark:all": "tsx src/core/runner.ts --benchmark all",
+    "benchmark:p1": "tsx src/core/runner.ts --benchmark p1",
+    "benchmark:p2": "tsx src/core/runner.ts --benchmark p2",
+    "benchmark:p3": "tsx src/core/runner.ts --benchmark p3",
+    "benchmark:p4": "tsx src/core/runner.ts --benchmark p4"
   },
   "dependencies": {
     "https-proxy-agent": "^9.1.0",
