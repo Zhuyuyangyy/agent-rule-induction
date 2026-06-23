@@ -104,20 +104,20 @@ Before any sentence enters the paper draft, check:
 
 ## Verifier Claims
 
-### V1: SymPy verifier prototype exists but is not part of P0/P1 results
+### V1: SymPy verifier exists and is integrated in P2/P3/P4, not in P0/P1
 
-- **Claim**: A SymPy verifier prototype has been implemented with symbolic equivalence and dimensional homogeneity checks, plus a TypeScript IPC adapter
-- **Evidence**: `tools/sympy_verifier/verify_expr.py`, `src/verifier/verifierClient.ts`, 6/6 pytest tests pass, 6/6 smoke tests pass
-- **Status**: supported (prototype exists)
-- **Allowed wording**: "A SymPy verifier prototype exists as future infrastructure for P2/P3"
+- **Claim**: A SymPy verifier has been implemented with symbolic equivalence and dimensional homogeneity checks, plus a TypeScript IPC adapter, and is integrated into P2/P3/P4 benchmarks
+- **Evidence**: `tools/sympy_verifier/verify_expr.py`, `src/verifier/verifierClient.ts`, 6/6 pytest tests pass, 6/6 smoke tests pass, P2/P3/P4 benchmarks use verifier constraints
+- **Status**: supported
+- **Allowed wording**: "The SymPy verifier is integrated into P2/P3/P4 benchmarks for constraint checking"
 - **Forbidden wording**: "The verifier was used in P0/P1 benchmark results"
 
-### V2: Verifier is future infrastructure for P2/P3
+### V2: Verifier is not used in P0/P1 results
 
-- **Claim**: The verifier is designed for P2/P3 integration, not for P0/P1
+- **Claim**: The verifier is not part of P0/P1 benchmark results, which use numerical scoring only
 - **Evidence**: By design — verifier is not called from any P0/P1 benchmark code
 - **Status**: supported
-- **Allowed wording**: "The SymPy verifier is future infrastructure for physics-constrained benchmarks"
+- **Allowed wording**: "The SymPy verifier is not used in P0/P1; P0/P1 use numerical scoring"
 - **Forbidden wording**: "The verifier improves P1 results"
 
 ## P2 Claims

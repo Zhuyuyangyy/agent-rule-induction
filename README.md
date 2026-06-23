@@ -8,6 +8,8 @@ A staged framework for investigating whether external verifiable search mechanis
 - **P1 (Symbolic Expression Discovery)**: Paper-grade benchmark. 265 formulas, 5 baselines, multi-noise evaluation. Active-infogain achieves highest symbolic equivalence rate among non-oracle baselines.
 - **P2 (Physics-Constrained Law Rediscovery)**: Completed. 29 physics formulas with dimensional annotations, 6 baselines. Verifier constraints reject 87.5% of invalid candidates. Controlled law rediscovery, not new physics.
 - **P3 (Anomaly-Driven Theory Refinement)**: Completed. 8 scenarios, 7 correction families, 7 baselines. Verifier eliminates false positives. Controlled sandbox, not real physics.
+- **P4 (Open-Ended Active Theory Search)**: Completed (prototype). Template-based simulated LLM candidate generation, 6 baselines. LLMs are proposal mechanisms, not final judges. External verification remains necessary.
+- **Final release**: `v1.0.0-active-theory-discovery` (commit `a01b266`)
 
 ### Stage 1.2 Multi-model Validation
 
@@ -91,15 +93,22 @@ P3 is a controlled sandbox inspired by historical anomalies, NOT real physics di
 ```bash
 npm install
 
-# P0 tests
-npm test
+# Type checking and unit tests
 npm run typecheck
+npm test
 
-# P1 benchmarks
+# P0/P1 benchmarks
 npm run p1:benchmark          # noise=0
 npm run p1:benchmark:noisy    # noise=0.05
 npm run p1:benchmark:multi-noise  # noise=0,0.01,0.05,0.1
+
+# P2/P3/P4 benchmarks
+npm run p2:benchmark
+npm run p3:benchmark
+npm run p4:benchmark
 ```
+
+All benchmarks are algorithmic and require no API keys.
 
 ## Key Results
 
@@ -142,28 +151,62 @@ src/
     baselines.ts       # 5 baselines (random, greedy, active_random, active_infogain, oracle)
     p1Benchmark.ts     # Main benchmark runner
     p1FailureAnalysis.ts # Failure classification
+  p2/
+    p2Benchmark.ts       # P2 benchmark runner (6 baselines)
+    p2Dataset.ts         # 29 physics formulas with dimensional annotations
+    p2Score.ts           # P2 scoring metrics
+    dimensionalConstraints.ts  # L,M,T dimension checking
+    physicsExpr.ts       # Physics expression utilities
+    physicsFormulaLibrary.ts   # Physics formula definitions
+  p3/
+    p3Benchmark.ts       # P3 benchmark runner (7 baselines)
+    anomalyDataset.ts    # 8 anomaly scenarios
+    anomalyScore.ts      # P3 scoring metrics
+    candidateCorrections.ts  # 7 correction families
+  p4/
+    p4Benchmark.ts       # P4 benchmark runner (6 baselines)
+    candidateGenerator.ts  # Template-based simulated LLM
+    candidateParser.ts   # Candidate expression parser
+    verifierFilteredSearch.ts  # Verifier-filtered search
+  verifier/
+    verifierClient.ts    # TypeScript IPC adapter for SymPy verifier
+    smokeTest.ts         # Verifier smoke tests
+tools/
+  sympy_verifier/
+    verify_expr.py       # SymPy verifier (equivalence, dimension, canonicalize)
+    requirements.txt     # Python dependencies
+    examples/            # Example JSON inputs
+    tests/               # pytest tests
 docs/
   p0_multiseed_report.md
   p0_benchmark.md
   failure_analysis.md
   p1_prototype.md
   p1_failure_analysis.md
+  final_project_report.md
   artifacts/
     p1_multi_noise/
-      report.md
-      summary.csv
-      failure_cases.jsonl
+      report.md, summary.csv, failure_cases.jsonl
+    p2_physics_constrained/
+      report.md, summary.csv, failure_cases.jsonl
+    p3_anomaly_refinement/
+      report.md, summary.csv, failure_cases.jsonl
+    final/
+      final_project_report.md
+paper/
+  draft.md, claims.md, limitations.md, reproducibility.md
+  figures_plan.md, tables_plan.md
 ```
 
 ## Core Thesis
 
-> External algorithmic information-gain mechanisms (version-space narrowing, variance-based query selection) consistently outperform raw LLM reasoning or simple heuristics in both boolean rule induction and symbolic expression discovery. This supports the need for verifiable search scaffolding rather than relying on LLM reasoning alone.
+> External algorithmic information-gain mechanisms (version-space narrowing, variance-based query selection) consistently outperform raw LLM reasoning or simple heuristics across controlled discovery settings — from boolean rule induction (P0) through symbolic expression discovery (P1), physics-constrained law rediscovery (P2), anomaly-driven refinement (P3), and open-ended candidate search (P4). This supports the need for verifiable search scaffolding rather than relying on LLM reasoning alone.
 
 ## What This Project Does NOT Claim
 
 - It does NOT discover new physical laws
 - It does NOT complete "AI scientist"
 - It does NOT demonstrate deeper physics understanding
-- P2 (physical law recovery) is roadmap only and has not been started
+- P2/P3/P4 remain controlled benchmark settings, not real physics discovery
 
-Active-infogain improves symbolic-equivalence robustness under noisy conditions, while P1 remains a symbolic-discovery benchmark rather than physical theory discovery.
+This project does not claim discovery of new physical laws. This project does not claim to be a complete AI scientist. P2 is controlled law rediscovery, P3 is a controlled sandbox, and P4 uses simulated LLM proposals. All benchmarks operate within fixed hypothesis spaces.

@@ -22,13 +22,13 @@ P1 matches against a known formula library. It does not discover new physical la
 
 The system cannot propose hypotheses outside the pre-defined library. In real science, hypothesis generation is a critical creative step. Our framework currently assumes this step is solved externally.
 
-## L6: SymPy Verifier Is Prototype, Not Yet Integrated
+## L6: SymPy Verifier Is Not Used in P0/P1
 
-A minimal SymPy verifier prototype has been implemented (Stage 2.5-B) with symbolic equivalence and dimensional homogeneity checks, plus a TypeScript IPC adapter (Stage 2.5-C). However, **the verifier is not part of the reported P0/P1 benchmark results**. Symbolic equivalence in P1 is still checked numerically (R^2 on test points), not structurally. Two expressions may have high R^2 but be symbolically different (e.g., |x-1| vs x-1 for x>1). The verifier is future infrastructure for P2/P3 benchmarks where it will reject invalid candidates based on structural and dimensional constraints.
+A SymPy verifier has been implemented (Stage 2.5-B) with symbolic equivalence and dimensional homogeneity checks, plus a TypeScript IPC adapter (Stage 2.5-C). The verifier is integrated into P2/P3/P4 benchmarks where it rejects invalid candidates based on structural and dimensional constraints. However, **the verifier is not part of the reported P0/P1 benchmark results**. Symbolic equivalence in P1 is still checked numerically (R^2 on test points), not structurally. Two expressions may have high R^2 but be symbolically different (e.g., |x-1| vs x-1 for x>1).
 
 ## L7: No Real-World Anomaly-Driven Physics Benchmark Yet
 
-No experiments use real experimental data. All evaluations use synthetically generated data from known formulas with controlled noise. P2 (physical law recovery) uses physics-style formulas but still in a controlled sandbox.
+No experiments use real experimental data. All evaluations use synthetically generated data from known formulas with controlled noise. P2 (physics-constrained law rediscovery) uses physics-style formulas but still in a controlled sandbox.
 
 ## L12: Simplified L,M,T Dimension Model
 

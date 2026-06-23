@@ -251,7 +251,7 @@ Failure analysis serves three purposes in this work:
 
 2. **Mechanism diagnosis**: Failures reveal where the search mechanism breaks down. Oracle_gap failures in active_random show that random query selection is insufficient for discriminating between similar formulas.
 
-3. **Future verifier motivation**: The existence of symbolic_mismatch failures motivates the need for a SymPy-based structural verifier that can check symbolic equivalence, dimensional homogeneity, and limit behavior. A minimal SymPy verifier prototype has been implemented (Stage 2.5-B) with symbolic equivalence and dimensional homogeneity checks, and a TypeScript adapter (Stage 2.5-C) provides IPC to the Python sidecar. However, **the SymPy verifier is not part of the reported P0/P1 benchmark results**. It is future infrastructure for P2/P3 benchmarks. Current evidence remains P0/P1 only.
+3. **Future verifier motivation**: The existence of symbolic_mismatch failures motivates the need for a SymPy-based structural verifier that can check symbolic equivalence, dimensional homogeneity, and limit behavior. A SymPy verifier has been implemented (Stage 2.5-B) with symbolic equivalence and dimensional homogeneity checks, and a TypeScript adapter (Stage 2.5-C) provides IPC to the Python sidecar. The verifier is **not part of the reported P0/P1 benchmark results** (P0/P1 use numerical scoring only), but it is integrated into P2/P3/P4 benchmarks where it rejects invalid candidates based on structural and dimensional constraints.
 
 *Evidence: `docs/p1_failure_analysis.md`*
 
@@ -303,9 +303,9 @@ This is a controlled benchmark paper with explicit boundary conditions. The foll
 
 5. **Single-model LLM validation**: LLM baselines are tested on deepseek-chat only. Cross-model generalization is blocked by unavailable API keys (gpt-4.1-mini, Claude, Qwen, Kimi).
 
-6. **SymPy verifier is prototype, not yet integrated**: A minimal SymPy verifier prototype exists (symbolic equivalence + dimensional homogeneity checks, with a TypeScript IPC adapter), but it is not part of the reported P0/P1 benchmark results. It is future infrastructure for P2/P3 benchmarks where verifier constraints will reject invalid candidates.
+6. **SymPy verifier is integrated in P2/P3/P4, not in P0/P1**: A SymPy verifier has been implemented (symbolic equivalence + dimensional homogeneity checks, with a TypeScript IPC adapter) and is integrated into P2/P3/P4 benchmarks where it rejects invalid candidates. It is not part of the P0/P1 benchmark results, which use numerical scoring only.
 
-7. **No dimensional analysis in P1 results yet**: The current P1 benchmark does not use dimensional homogeneity checks. The SymPy verifier prototype supports dimensional analysis but has not been integrated into P1 scoring. This is planned for P2.
+7. **No dimensional analysis in P1 results**: The P1 benchmark does not use dimensional homogeneity checks. Dimensional analysis is integrated into P2 (physics-constrained benchmark) where it is appropriate, not in P1 (general symbolic discovery).
 
 8. **No anomaly-driven physics benchmark with real data**: P3 uses synthetic anomaly data, not real experimental data.
 
@@ -331,7 +331,7 @@ The long-term vision of Active Theory Discovery is an "AlphaGo-for-Science" syst
 
 **P4 (completed, prototype)**: Open-ended active theory search. Template-based simulated LLM candidate generation with 15 templates. Parse success ~88%, hallucination rate ~11-14%. LLM-based approaches achieve ~23% correction recovery vs. 100% for library-based search. LLMs are proposal mechanisms, not final judges. External verification remains necessary.
 
-**We emphasize: P0 and P1 provide early controlled evidence for the Active Theory Discovery thesis. They do not demonstrate autonomous scientific discovery or new physical law discovery.**
+**We emphasize: P0 through P4 provide controlled evidence for the Active Theory Discovery thesis. They do not demonstrate autonomous scientific discovery or new physical law discovery.**
 
 ## 12. Conclusion
 

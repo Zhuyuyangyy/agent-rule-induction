@@ -62,11 +62,11 @@ P0: Boolean Rule Induction     [DONE] -----> Controlled evidence for external se
                                       |
 P1: Symbolic Discovery          [DONE] -----> Mechanism transfers to continuous space
                                       |
-P2: Physical Law Recovery       [ROADMAP] --> Physics-constrained formulas
+P2: Physics-Constrained Rediscovery [DONE] -----> Controlled law rediscovery with verifier
                                       |
-P3: Anomaly-Driven Refinement   [ROADMAP] --> Theory revision from anomalies
+P3: Anomaly-Driven Refinement   [DONE] -----> Theory revision from planted anomalies
                                       |
-P4: AlphaGo-for-Science         [VISION] ---> Autonomous theory discovery
+P4: Open-Ended Search            [PROTOTYPE] -> Simulated LLM candidate generation
 ```
 
 Key: each stage builds on the previous; no stage claims to be complete science.
