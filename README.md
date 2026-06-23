@@ -5,11 +5,15 @@ A staged framework for investigating whether external verifiable search mechanis
 ## Project Status
 
 - **P0 (Rule Induction)**: Completed. Multi-seed validation confirms algorithmic_infogain reaches oracle performance (100%) while LLM baselines underperform (3.6%-21.0%).
-- **P1 (Symbolic Expression Discovery)**: Paper-grade benchmark. 265 formulas, 5 baselines, multi-noise evaluation. Active-infogain achieves highest symbolic equivalence rate among non-oracle baselines.
-- **P2 (Physics-Constrained Law Rediscovery)**: Completed. 29 physics formulas with dimensional annotations, 6 baselines. Verifier constraints reject 87.5% of invalid candidates. Controlled law rediscovery, not new physics.
+- **P1 (Symbolic Expression Discovery)**: Paper-grade benchmark. 265 formulas, 5 baselines, multi-noise evaluation.
+  Active-infogain achieves highest symbolic equivalence rate among non-oracle baselines.
+- **P2 (Physics-Constrained Law Rediscovery)**: Completed. 29 physics formulas with dimensional annotations, 6 baselines.
+  Verifier constraints reject 87.5% of invalid candidates. Controlled law rediscovery, not new physics.
 - **P3 (Anomaly-Driven Theory Refinement)**: Completed. 8 scenarios, 7 correction families, 7 baselines. Verifier eliminates false positives. Controlled sandbox, not real physics.
-- **P4 (Open-Ended Active Theory Search)**: Completed (prototype). Template-based simulated LLM candidate generation, 6 baselines. LLMs are proposal mechanisms, not final judges. External verification remains necessary.
-- **P5 (Causal Mechanism Discovery)**: Completed. 8 graph configurations, 5 baselines. Active intervention selection improves graph recovery. Controlled causal benchmark, not real-world causal discovery.
+- **P4 (Open-Ended Active Theory Search)**: Completed (prototype). Template-based simulated LLM candidate generation, 6 baselines.
+  LLMs are proposal mechanisms, not final judges. External verification remains necessary.
+- **P5 (Causal Mechanism Discovery)**: Completed. 8 graph configurations, 5 baselines. Active intervention selection improves graph recovery.
+  Controlled causal benchmark, not real-world causal discovery.
 - **Multi-Agent Workflow**: Completed. 6 bounded agents (proposer, experiment designer, verifier, skeptic, reviewer, archivist). LLM can only propose, never judge.
 - **Current release**: `v2.0.0-active-theory-discovery-platform`
 
@@ -232,7 +236,10 @@ paper/
 
 ## Core Thesis
 
-> External algorithmic information-gain mechanisms (version-space narrowing, variance-based query selection) consistently outperform raw LLM reasoning or simple heuristics across controlled discovery settings — from boolean rule induction (P0) through symbolic expression discovery (P1), physics-constrained law rediscovery (P2), anomaly-driven refinement (P3), open-ended candidate search (P4), and causal mechanism discovery (P5). This supports the need for verifiable search scaffolding rather than relying on LLM reasoning alone.
+> External algorithmic information-gain mechanisms (version-space narrowing, variance-based query selection) consistently outperform raw LLM reasoning or simple heuristics
+> across controlled discovery settings — from boolean rule induction (P0) through symbolic expression discovery (P1), physics-constrained law rediscovery (P2),
+> anomaly-driven refinement (P3), open-ended candidate search (P4), and causal mechanism discovery (P5).
+> This supports the need for verifiable search scaffolding rather than relying on LLM reasoning alone.
 
 ## What This Project Does NOT Claim
 
@@ -241,4 +248,6 @@ paper/
 - It does NOT demonstrate deeper physics understanding
 - P2/P3/P4/P5 remain controlled benchmark settings, not real physics or causal discovery
 
-This project does not claim discovery of new physical laws. This project does not claim to be a complete AI scientist. P2 is controlled law rediscovery, P3 is a controlled sandbox, P4 uses simulated LLM proposals, and P5 is controlled causal benchmark. All benchmarks operate within fixed or bounded hypothesis spaces.
+This project does not claim discovery of new physical laws. This project does not claim to be a complete AI scientist.
+P2 is controlled law rediscovery, P3 is a controlled sandbox, P4 uses simulated LLM proposals, and P5 is controlled causal benchmark.
+All benchmarks operate within fixed or bounded hypothesis spaces.

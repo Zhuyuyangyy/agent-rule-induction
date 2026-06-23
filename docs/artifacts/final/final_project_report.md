@@ -2,7 +2,8 @@
 
 ## Project Summary
 
-Active Theory Discovery provides a controlled, reproducible benchmark suite showing that external verifiable active search mechanisms can improve rule induction, symbolic discovery, physics-constrained rediscovery, and anomaly-driven refinement under bounded settings.
+Active Theory Discovery provides a controlled, reproducible benchmark suite showing that external verifiable active search mechanisms
+can improve rule induction, symbolic discovery, physics-constrained rediscovery, and anomaly-driven refinement under bounded settings.
 
 ## Release Information
 
