@@ -1,0 +1,6 @@
+{
+  "task": "limit_check",
+  "expr": "sin(x)/x",
+  "test_point": {"x": 0},
+  "expected_limit": "1"
+}

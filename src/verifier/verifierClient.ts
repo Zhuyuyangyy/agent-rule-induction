@@ -2,61 +2,41 @@
  * VerifierClient - TypeScript adapter for the SymPy verifier sidecar.
  *
  * Spawns the Python verifier as a subprocess, sends JSON requests via stdin,
- * and returns structured results. Does not modify any P0/P1 benchmark code.
+ * and returns structured results. Supports caching for repeated requests.
+ * Does not modify any P0/P1 benchmark code.
  */
 
 import { spawn } from "child_process";
 import * as path from "path";
+import type {
+  VerifierResult,
+  VerifierClientOptions,
+  VerifierRequest,
+  EquivalenceCheckRequest,
+  DimensionCheckRequest,
+  CanonicalizeRequest,
+  LimitCheckRequest,
+  InvariantCheckRequest,
+  ComplexityCheckRequest,
+} from "./verifierTypes.js";
+import { VerifierCache } from "./verifierCache.js";
 
-/** Result returned by the SymPy verifier. */
-export interface VerifierResult {
-  valid: boolean;
-  canonical_expr: string | null;
-  violations: string[];
-}
-
-/** Options for the verifier client. */
-export interface VerifierClientOptions {
-  /** Path to the Python verifier script. Defaults to tools/sympy_verifier/verify_expr.py */
-  verifierPath?: string;
-  /** Timeout in milliseconds. Defaults to 10000. */
-  timeoutMs?: number;
-  /** Path to the Python interpreter. Defaults to "python". */
-  pythonPath?: string;
-}
-
-/** Equivalence check request. */
-export interface EquivalenceCheckRequest {
-  task: "equivalence_check";
-  expr: string;
-  target_expr: string;
-  variables?: Record<string, string>;
-  options?: { simplify?: boolean; tolerance?: number };
-}
-
-/** Dimension check request. */
-export interface DimensionCheckRequest {
-  task: "dimension_check";
-  expr: string;
-  variables: Record<string, string>;
-  expected_dimension?: string;
-}
-
-/** Canonicalize request. */
-export interface CanonicalizeRequest {
-  task: "canonicalize";
-  expr: string;
-}
-
-export type VerifierRequest =
-  | EquivalenceCheckRequest
-  | DimensionCheckRequest
-  | CanonicalizeRequest;
+export type {
+  VerifierResult,
+  VerifierRequest,
+  EquivalenceCheckRequest,
+  DimensionCheckRequest,
+  CanonicalizeRequest,
+  LimitCheckRequest,
+  InvariantCheckRequest,
+  ComplexityCheckRequest,
+};
 
 export class VerifierClient {
   private verifierPath: string;
   private timeoutMs: number;
   private pythonPath: string;
+  private cache: VerifierCache | null;
 
   constructor(options: VerifierClientOptions = {}) {
     const projectRoot = path.resolve(import.meta.dirname, "../..");
@@ -64,16 +44,40 @@ export class VerifierClient {
       ?? path.join(projectRoot, "tools/sympy_verifier/verify_expr.py");
     this.timeoutMs = options.timeoutMs ?? 10_000;
     this.pythonPath = options.pythonPath ?? "python";
+    this.cache = options.enableCache
+      ? new VerifierCache(options.maxCacheSize ?? 256)
+      : null;
   }
 
   /**
    * Send a verification request to the Python sidecar.
    * The request is piped via stdin; the response is parsed from stdout.
+   * Results are cached if caching is enabled.
    */
   async verify(request: VerifierRequest): Promise<VerifierResult> {
     const requestJson = JSON.stringify(request);
 
-    return new Promise<VerifierResult>((resolve, reject) => {
+    // Check cache
+    if (this.cache) {
+      const cached = this.cache.get(requestJson);
+      if (cached !== undefined) {
+        return cached;
+      }
+    }
+
+    const result = await this._spawnVerifier(requestJson);
+
+    // Store in cache
+    if (this.cache) {
+      this.cache.set(requestJson, result);
+    }
+
+    return result;
+  }
+
+  /** Internal: spawn the Python verifier subprocess. */
+  private _spawnVerifier(requestJson: string): Promise<VerifierResult> {
+    return new Promise<VerifierResult>((resolve) => {
       const proc = spawn(this.pythonPath, [this.verifierPath, "-"], {
         stdio: ["pipe", "pipe", "pipe"],
       });
@@ -153,7 +157,7 @@ export class VerifierClient {
       expr,
       target_expr: targetExpr,
       options,
-    });
+    } as EquivalenceCheckRequest);
   }
 
   /** Convenience: check dimensional homogeneity. */
@@ -167,11 +171,64 @@ export class VerifierClient {
       expr,
       variables,
       expected_dimension: expectedDimension,
-    });
+    } as DimensionCheckRequest);
   }
 
   /** Convenience: canonicalize an expression. */
   async canonicalize(expr: string): Promise<VerifierResult> {
-    return this.verify({ task: "canonicalize", expr });
+    return this.verify({ task: "canonicalize", expr } as CanonicalizeRequest);
+  }
+
+  /** Convenience: check limit behavior. */
+  async checkLimit(
+    expr: string,
+    testPoint: Record<string, string | number>,
+    expectedLimit?: string,
+    direction?: "+" | "-",
+  ): Promise<VerifierResult> {
+    return this.verify({
+      task: "limit_check",
+      expr,
+      test_point: testPoint,
+      expected_limit: expectedLimit,
+      direction,
+    } as LimitCheckRequest);
+  }
+
+  /** Convenience: check invariants. */
+  async checkInvariants(
+    expr: string,
+    invariants: Array<{
+      type: "conservation" | "symmetry" | "positivity";
+      variables: string[];
+    }>,
+  ): Promise<VerifierResult> {
+    return this.verify({
+      task: "invariant_check",
+      expr,
+      invariants,
+    } as InvariantCheckRequest);
+  }
+
+  /** Convenience: check complexity. */
+  async checkComplexity(
+    expr: string,
+    maxComplexity?: number,
+  ): Promise<VerifierResult> {
+    return this.verify({
+      task: "complexity_check",
+      expr,
+      max_complexity: maxComplexity,
+    } as ComplexityCheckRequest);
+  }
+
+  /** Get cache statistics (if caching is enabled). */
+  getCacheStats(): { size: number; hits: number; misses: number; hitRate: number } | null {
+    return this.cache?.getStats() ?? null;
+  }
+
+  /** Clear the result cache. */
+  clearCache(): void {
+    this.cache?.clear();
   }
 }

@@ -1,0 +1,7 @@
+{
+  "task": "invariant_check",
+  "expr": "x^2 + y^2",
+  "invariants": [
+    {"type": "symmetry", "variables": ["x", "y"]}
+  ]
+}

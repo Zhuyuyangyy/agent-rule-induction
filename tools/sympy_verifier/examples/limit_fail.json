@@ -1,0 +1,6 @@
+{
+  "task": "limit_check",
+  "expr": "1/x",
+  "test_point": {"x": 0},
+  "expected_limit": "0"
+}
