@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
-  "release_tag": "v1.0.0-active-theory-discovery",
-  "commit": "a01b266",
+  "version": "2.0.1",
+  "release_tag": "v2.0.1-final-polish",
+  "commit": "76c8deb",
   "artifacts": [
     {
       "benchmark": "P0",
@@ -10,7 +10,7 @@
       "report_path": "docs/p0_multiseed_report.md",
       "summary_csv": null,
       "failure_cases": null,
-      "release_tag": "v0.1-p0-p1",
+      "release_tag": "v2.0.1-final-polish",
       "generation_command": "npm test",
       "supported_claims": [
         "P0 algorithmic_infogain reaches oracle-level performance",
@@ -24,7 +24,7 @@
       "report_path": "docs/artifacts/p1_multi_noise/report.md",
       "summary_csv": "docs/artifacts/p1_multi_noise/summary.csv",
       "failure_cases": "docs/artifacts/p1_multi_noise/failure_cases.jsonl",
-      "release_tag": "v0.2.0-stage2-p1",
+      "release_tag": "v2.0.1-final-polish",
       "generation_command": "npm run p1:benchmark:multi-noise",
       "supported_claims": [
         "P1 transfers active search from rule induction to symbolic discovery",
@@ -39,7 +39,7 @@
       "report_path": "docs/artifacts/p2_physics_constrained/report.md",
       "summary_csv": "docs/artifacts/p2_physics_constrained/summary.csv",
       "failure_cases": "docs/artifacts/p2_physics_constrained/failure_cases.jsonl",
-      "release_tag": "v0.3.0-stage4-p2",
+      "release_tag": "v2.0.1-final-polish",
       "generation_command": "npm run p2:benchmark",
       "supported_claims": [
         "P2 evaluates physics-constrained law rediscovery in controlled settings",
@@ -54,7 +54,7 @@
       "report_path": "docs/artifacts/p3_anomaly_refinement/report.md",
       "summary_csv": "docs/artifacts/p3_anomaly_refinement/summary.csv",
       "failure_cases": "docs/artifacts/p3_anomaly_refinement/failure_cases.jsonl",
-      "release_tag": "v0.4.0-stage5-p3",
+      "release_tag": "v2.0.1-final-polish",
       "generation_command": "npm run p3:benchmark",
       "supported_claims": [
         "P3 tests anomaly-driven theory refinement in a controlled sandbox",
@@ -68,13 +68,28 @@
       "report_path": "results/p4_open_ended_search/report.md",
       "summary_csv": "results/p4_open_ended_search/summary.csv",
       "failure_cases": "results/p4_open_ended_search/failure_cases.jsonl",
-      "release_tag": "v1.0.0-active-theory-discovery",
+      "release_tag": "v2.0.1-final-polish",
       "generation_command": "npm run p4:benchmark",
       "note": "P4 artifacts are generated at runtime, not tracked in docs/artifacts/",
       "supported_claims": [
         "P4 explores open-ended candidate generation in controlled settings",
         "LLMs are proposal mechanisms, not final judges",
         "External verification remains necessary"
+      ]
+    },
+    {
+      "benchmark": "P5",
+      "name": "Causal Mechanism Discovery",
+      "result_path": "results/p5_causal_mechanism/",
+      "report_path": "results/p5_causal_mechanism/report.md",
+      "summary_csv": "results/p5_causal_mechanism/summary.csv",
+      "failure_cases": "results/p5_causal_mechanism/failure_cases.jsonl",
+      "release_tag": "v2.0.1-final-polish",
+      "generation_command": "npm run p5:benchmark",
+      "note": "P5 artifacts are generated at runtime, not tracked in docs/artifacts/",
+      "supported_claims": [
+        "P5 evaluates causal mechanism discovery in controlled settings",
+        "Active intervention selection improves graph recovery over random baselines"
       ]
     }
   ],
@@ -83,6 +98,6 @@
     "The system is a complete AI scientist",
     "The system surpasses relativity",
     "The system has solved open-ended scientific discovery",
-    "P2/P3 discover new physics"
+    "P2/P3/P5 discover new physics"
   ]
 }

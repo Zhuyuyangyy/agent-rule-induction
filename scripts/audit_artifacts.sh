@@ -43,10 +43,18 @@ else
   echo "[NOTE] P4 runtime results not present (run 'npm run p4:benchmark' to generate)"
 fi
 
+# P5 note
+if [ -d "results/p5_causal_mechanism" ]; then
+  echo "[OK] P5 runtime results: results/p5_causal_mechanism/"
+else
+  echo "[NOTE] P5 runtime results not present (run 'npm run p5:benchmark' to generate)"
+fi
+
 # Source files
 check_artifact "P2 source" "src/p2/p2Benchmark.ts"
 check_artifact "P3 source" "src/p3/p3Benchmark.ts"
 check_artifact "P4 source" "src/p4/p4Benchmark.ts"
+check_artifact "P5 source" "src/p5/p5Benchmark.ts"
 check_artifact "Verifier source" "src/verifier/verifierClient.ts"
 check_artifact "SymPy verifier" "tools/sympy_verifier/verify_expr.py"
 
