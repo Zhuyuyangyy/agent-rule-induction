@@ -1,7 +1,7 @@
 {
   "version": "2.0.2",
   "release_tag": "v2.0.2-publication-consistency",
-  "commit": "(to be filled after commit)",
+  "commit": "0197c7a",
   "artifacts": [
     {
       "benchmark": "P0",

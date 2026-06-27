@@ -3,7 +3,7 @@
 ## 1. Release Information
 
 - **Current release**: `v2.0.2-publication-consistency`
-- **Release commit**: (to be filled after commit)
+- **Release commit**: 0197c7a
 - **Repository**: https://github.com/Zhuyuyangyy/agent-rule-induction
 
 ### Release History
