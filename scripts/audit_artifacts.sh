@@ -33,22 +33,18 @@ check_artifact "P3 report" "docs/artifacts/p3_anomaly_refinement/report.md"
 check_artifact "P3 summary" "docs/artifacts/p3_anomaly_refinement/summary.csv"
 check_artifact "P3 failures" "docs/artifacts/p3_anomaly_refinement/failure_cases.jsonl"
 
+# P4 archived artifacts
+check_artifact "P4 report" "docs/artifacts/p4_open_ended_search/report.md"
+check_artifact "P4 summary" "docs/artifacts/p4_open_ended_search/summary.csv"
+check_artifact "P4 failures" "docs/artifacts/p4_open_ended_search/failure_cases.jsonl"
+
+# P5 archived artifacts
+check_artifact "P5 report" "docs/artifacts/p5_causal_mechanism/report.md"
+check_artifact "P5 summary" "docs/artifacts/p5_causal_mechanism/summary.csv"
+check_artifact "P5 failures" "docs/artifacts/p5_causal_mechanism/failure_cases.jsonl"
+
 # Final report
 check_artifact "Final report" "docs/artifacts/final/final_project_report.md"
-
-# P4 note
-if [ -d "results/p4_open_ended_search" ]; then
-  echo "[OK] P4 runtime results: results/p4_open_ended_search/"
-else
-  echo "[NOTE] P4 runtime results not present (run 'npm run p4:benchmark' to generate)"
-fi
-
-# P5 note
-if [ -d "results/p5_causal_mechanism" ]; then
-  echo "[OK] P5 runtime results: results/p5_causal_mechanism/"
-else
-  echo "[NOTE] P5 runtime results not present (run 'npm run p5:benchmark' to generate)"
-fi
 
 # Source files
 check_artifact "P2 source" "src/p2/p2Benchmark.ts"

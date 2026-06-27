@@ -322,8 +322,8 @@ Failure analysis serves three purposes in this work:
 All experiments are reproducible from the public repository:
 
 - **Repository**: https://github.com/Zhuyuyangyy/agent-rule-induction
-- **Final release tag**: `v1.0.0-active-theory-discovery`
-- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v1.0.0-active-theory-discovery
+- **Final release tag**: `v2.0.2-publication-consistency`
+- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v2.0.2-publication-consistency
 
 ### Reproduction Commands
 

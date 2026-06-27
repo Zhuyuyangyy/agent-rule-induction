@@ -660,15 +660,15 @@ All experiments are reproducible from the public repository.
 ### 14.1 Repository and Release
 
 - **Repository**: https://github.com/Zhuyuyangyy/agent-rule-induction
-- **Release tag**: `v2.0.0-active-theory-discovery-platform`
-- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v2.0.0-active-theory-discovery-platform
+- **Release tag**: `v2.0.2-publication-consistency`
+- **Release page**: https://github.com/Zhuyuyangyy/agent-rule-induction/releases/tag/v2.0.2-publication-consistency
 
 ### 14.2 Reproduction Commands
 
 ```bash
 git clone https://github.com/Zhuyuyangyy/agent-rule-induction.git
 cd agent-rule-induction
-git checkout v2.0.0-active-theory-discovery-platform
+git checkout v2.0.2-publication-consistency
 npm install
 npm run typecheck
 npm test
@@ -756,7 +756,7 @@ challenge.
 
 ## Appendix
 
-Detailed supplementary materials are available in the repository under the release tag `v1.0.0-active-theory-discovery`:
+Detailed supplementary materials are available in the repository under the release tag `v2.0.2-publication-consistency`:
 
 - `paper/limitations.md` — Extended limitation discussion
 - `paper/reproducibility.md` — Full reproducibility protocol

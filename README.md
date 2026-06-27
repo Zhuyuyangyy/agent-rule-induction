@@ -15,7 +15,7 @@ A staged framework for investigating whether external verifiable search mechanis
 - **P5 (Causal Mechanism Discovery)**: Completed. 8 graph configurations, 5 baselines. Active intervention selection improves graph recovery.
   Controlled causal benchmark, not real-world causal discovery.
 - **Multi-Agent Workflow**: Completed. 6 bounded agents (proposer, experiment designer, verifier, skeptic, reviewer, archivist). LLM can only propose, never judge.
-- **Current release**: `v2.0.0-active-theory-discovery-platform`
+- **Current release**: `v2.0.2-publication-consistency`
 
 ### Stage 1.2 Multi-model Validation
 
